@@ -5,7 +5,7 @@ const {Schema, model} = require('mongoose')
 
 const userSchema = new Schema({
     playerID:{
-        type: Schema.Type.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'Player'
     },
     Username:{
