@@ -1,9 +1,6 @@
 const { User, Player } = require('../models');
 
 
-const userCount = async () => 
-User.aggregate()
-.then((numberOfUsers) => numberOfUsers)
 
 
 module.exports = {
@@ -12,9 +9,8 @@ module.exports = {
         .then(async (users) => {
             const userObj = {
                 users,
-                userCount: await userCount(),
             };
-            return res.json('user:' + userObj);
+            return res.json(userObj);
         })
         .catch((err) => {
         console.log(err);
