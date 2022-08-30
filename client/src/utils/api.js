@@ -1,3 +1,13 @@
+export const getMe = (token) => {
+    return fetch("/api/users/me", {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${token}`,
+        },
+    });
+};
+
 export const createUser = (data) => {
     return fetch("/api/users", {
         method: "POST",

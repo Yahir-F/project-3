@@ -13,6 +13,8 @@ const {
 
   router.route('/login').post(login);
 
+  router.route('/me').get(authMiddleware, getSingleUser);
+
   router.route('/:userId').get(getSingleUser).delete();
 
   module.exports = router;

@@ -16,7 +16,7 @@ module.exports = {
 
   async getSingleUser(req, res) {
     try {
-      const user = await User.findOne({ _id: req.params.userId });
+      const user = await User.findOne({ _id: req.user ? req.user._id : req.params.userId });
       if (!user) {
         return res.status(400).json({ message: 'Cannot find user with given id' });
       }
@@ -56,5 +56,5 @@ module.exports = {
     }
   },
 
-  
+
 };
