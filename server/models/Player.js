@@ -1,28 +1,25 @@
-const {Schema, model} = require('mongoose')
-
+const { Schema, model } = require('mongoose');
 
 const weaponSchema = new Schema({
-    damage:{
+    damage: {
         type: Number,
         min: 1,
     },
-    name:{
+    name: {
         type: String,
-        
     },
-
-})
+});
 
 const playerSchema = new Schema({
-    health:{
+    health: {
         type: Number,
         min: 1,
     },
-    experience:{
+    experience: {
         type: Number,
         min: 0,
     },
-    level:{
+    level: {
         type: Number,
         min: 0,
     },
@@ -30,10 +27,9 @@ const playerSchema = new Schema({
         type: Number,
         min: 0,
     },
-    Weapons:[weaponSchema],
-    
-    
-})
-const Player= model('Player', playerSchema);
+    weapons: [weaponSchema],
+});
+
+const Player = model('Player', playerSchema);
 
 module.exports = Player;
