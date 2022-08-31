@@ -1,0 +1,21 @@
+.tile {
+    width: 25px;
+    display: inline-block;
+}
+
+.floor {
+    background-color: grey;
+}
+
+.wall {
+    background-color: black;
+}
+
+.row, .tile {
+    margin: 0px;
+    padding: 0px;
+    border-style: solid;
+    border-color: black;
+    border-width: 0px;
+    height: 25px;
+  }
