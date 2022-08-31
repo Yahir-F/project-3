@@ -4,7 +4,7 @@ import { createUser } from '../utils/api';
 
 const SignupForm = (props) => {
     const [formState, setFormState] = useState({ username: '', email: '', password: '' });
-
+    const [errorMessage, setErrorMessage] = useState('')
     // update state based on form input changes
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -22,7 +22,11 @@ const SignupForm = (props) => {
         try {
             const response = await createUser(formState);
             const data = await response.json();
-            console.log(data);
+            if(!response.ok){
+              setErrorMessage(data.message)
+              console.log(data)
+              return;
+            }
             Auth.login(data.token);
         } catch (e) {
             console.error(e);
@@ -39,6 +43,7 @@ const SignupForm = (props) => {
 
         <div className="sign-form">
             <h2>Sign Up</h2>
+            <p>{errorMessage}</p>
             <form onSubmit={handleFormSubmit}>
                 <input
                     className='form-input'
