@@ -45,8 +45,8 @@ module.exports = {
       if (!user) {
         return res.status(400).json({ message: 'Unable to find user with that username' });
       }
-    
-     const isCorrectPassword = await user.isCorrectPassword(req.body.password);
+
+      const isCorrectPassword = await user.isCorrectPassword(req.body.password);
       if (!isCorrectPassword) {
         return res.status(400).json({ message: 'Incorrect password' });
       }
