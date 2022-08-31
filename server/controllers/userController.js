@@ -1,36 +1,61 @@
 const { User, Player } = require('../models');
-
-
-
+const { signToken } = require('../utils/auth');
 
 module.exports = {
-    getUsers(req, res) {
-        User.find()
-        .then(async (users) => {
-            const userObj = {
-                users,
-            };
-            return res.json(userObj);
-        })
-        .catch((err) => {
-        console.log(err);
-        return res.status(500).json(err);
-        });
-    },
-
-getSingleUser(req, res) {
-    User.findOne({ _id: req.params.UserId })
-      .select('-__v')
-      .then(async (user) =>
-        !user
-          ? res.status(404).json({ message: 'No User with given id' })
-          : res.json({
-              user,
-            })
-      )
-      .catch((err) => {
-        console.log(err);
-        return res.status(500).json(err);
-      });
+  async getUsers(req, res) {
+    try {
+      const users = await User.find();
+      if (!users) {
+        return res.status(400).json({ message: 'Cannot find users' });
+      }
+      return res.json(users);
+    } catch (error) {
+      return res.status(500).json(error);
+    }
   },
-}
+
+  async getSingleUser(req, res) {
+    try {
+      const user = await User.findOne({ _id: req.user ? req.user._id : req.params.userId });
+      if (!user) {
+        return res.status(400).json({ message: 'Cannot find user with given id' });
+      }
+      return res.json(user);
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  },
+
+  async createUser(req, res) {
+    try {
+      const user = await User.create(req.body);
+      if (!user) {
+        return res.status(400).json({ message: 'Unable to create user' });
+      }
+      const token = signToken(user);
+      res.json({ token, user });
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  },
+
+  async login(req, res) {
+    try {
+      const user = await User.findOne({ username: req.body.username });
+      if (!user) {
+        return res.status(400).json({ message: 'Unable to find user with that username' });
+      }
+    
+     const isCorrectPassword = await user.isCorrectPassword(req.body.password);
+      if (!isCorrectPassword) {
+        return res.status(400).json({ message: 'Incorrect password' });
+      }
+      const token = signToken(user);
+      res.json({ token, user });
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  },
+
+
+};
