@@ -4,7 +4,7 @@ import { loginUser } from '../utils/api';
 
 const LoginForm = (props) => {
   const [formState, setFormState] = useState({ username: '', password: '' });
-
+  const [errorMessage, setErrorMessage] = useState('')
 
   // update state based on form input changes
   const handleChange = (event) => {
@@ -23,6 +23,11 @@ const LoginForm = (props) => {
     try {
       const response = await loginUser(formState);
       const data = await response.json();
+      if(!response.ok){
+        setErrorMessage(data.message)
+        return;
+      }
+     
       Auth.login(data.token);
     } catch (e) {
       console.log(e);
@@ -39,7 +44,7 @@ const LoginForm = (props) => {
 
     <div className="log-form">
       <h2>Login</h2>
-
+        <p>{errorMessage}</p>
       <form onSubmit={handleFormSubmit}>
         <input
           className='form-input'
