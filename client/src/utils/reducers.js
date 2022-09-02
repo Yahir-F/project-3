@@ -1,7 +1,7 @@
 import Entity from '../game/entity';
 import Map from '../game/map';
 import Tile from '../game/tile';
-import { CREATE_MAP, UPDATE_MAP, ADD_ENTITY, MOVE, HEAL } from './actions';
+import { CREATE_MAP, UPDATE_MAP, RESET_STATE ,ADD_ENTITY, REMOVE_ENTITY, MOVE, HEAL, DAMAGE, GAIN_XP } from './actions';
 import _ from 'lodash';
 
 const initialState = {
@@ -33,6 +33,8 @@ function reducer(state = initialState, action) {
                 ...state,
                 map: action.payload
             };
+        case RESET_STATE:
+            return initialState;
         case ADD_ENTITY: {
             let updatedMap = state.map;
             const newEntity = new Entity(
@@ -48,6 +50,10 @@ function reducer(state = initialState, action) {
                 ...state,
                 map: updatedMap
             };
+        }
+        case REMOVE_ENTITY: {
+            delete state.entities[action.payload.entityName]
+            return state
         }
         case MOVE: {
             //console.log(action);
@@ -75,6 +81,14 @@ function reducer(state = initialState, action) {
         }
         case HEAL: {
             state.entities.player.attributes.health += action.payload.healValue
+            return state;
+        }
+        case DAMAGE: {
+            state.entities[action.payload.entityName].attributes.health -= action.payload.dmgValue
+            return state;
+        }
+        case GAIN_XP: {
+            state.entities.player.attributes.xp += action.payload.value;
             return state;
         }
         default:

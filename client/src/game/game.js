@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import _ from 'lodash';
 
-import { CREATE_MAP, ADD_ENTITY, MOVE, HEAL } from '../utils/actions';
+import { CREATE_MAP, ADD_ENTITY, MOVE, HEAL, REMOVE_ENTITY, RESET_STATE, DAMAGE, GAIN_XP } from '../utils/actions';
 import Entity from './entity';
 import Auth from '../utils/auth';
 
@@ -33,7 +33,9 @@ function Game() {
       tileClass: 'player',
       entityName: 'player',
       attributes: {
-        health: 100
+        health: 100,
+        damage: 5,
+        xp: 0
       }
     };
     dispatch({
@@ -60,7 +62,26 @@ function Game() {
       });
     }
 
-    
+    for (let i = 0; i < 3; i++) {
+      const freeTileKey = getFreeTile();
+      const freeTile = state.map.freeTiles[freeTileKey];
+      const newEnemy = {
+        x: freeTile.x,
+        y: freeTile.y,
+        tileClass: 'enemy',
+        entityName: 'enemy' + i,
+        attributes: {
+          health: 20,
+          damage: 7
+        }
+      };
+      dispatch({
+        type: ADD_ENTITY,
+        payload: newEnemy
+      });
+    }
+
+
   }
 
   const handleKeyPress = _.throttle((e) => {
@@ -87,7 +108,9 @@ function Game() {
   }, 100);
 
   function handleMove(vector) {
+
     console.log(state);
+    
     const player = state.entities.player;
     const map = state.map;
     const newCoords = {
@@ -134,12 +157,63 @@ function Game() {
           });
           dispatch({
             type: HEAL,
-            payload: {
-              healValue: newEntity.attributes.healValue
-            }
-          })
+            payload: { healValue: newEntity.attributes.healValue }
+          });
+          dispatch({
+            type: REMOVE_ENTITY,
+            payload: { entityName: newEntity.entityName }
+          });
           console.log(`Gained ${newEntity.attributes.healValue} health!`);
           break;
+        case 'enemy': {
+          const playerHealth = player.attributes.health;
+          const playerDamage = player.attributes.damage;
+          const enemyHealth = newEntity.attributes.health;
+          const enemyDamage = newEntity.attributes.damage;
+          dispatch({
+            type: DAMAGE,
+            payload: {
+              entityName: newEntity.entityName,
+              dmgValue: playerDamage
+            }
+          });
+          console.log(`Dealt ${playerDamage} damage to ${newEntity.entityName} (Current health: ${state.entities[newEntity.entityName].attributes.health})`);
+          dispatch({
+            type: DAMAGE,
+            payload: {
+              entityName: 'player',
+              dmgValue: enemyDamage
+            }
+          });
+          console.log(`Recieved ${enemyDamage} damage from ${newEntity.entityName}`);
+          // check if enemy lived
+          if (enemyHealth > playerDamage) {
+            // check if player died
+            if (enemyDamage >= playerHealth) {
+              alert("YOU DIED");
+              init();
+              return;
+            }
+          } else {
+            dispatch({
+              type: MOVE,
+              payload: {
+                entity: player,
+                vector: vector
+              }
+            });
+            dispatch({
+              type: REMOVE_ENTITY,
+              payload: { entityName: newEntity.entityName }
+            });
+            dispatch({
+              type: GAIN_XP,
+              payload: {value: 10}
+            })
+            console.log(`Gained ${10} XP`);
+          }
+          break;
+        }
         default:
           break;
       }
@@ -151,10 +225,7 @@ function Game() {
 
   // start game when Game component is loaded
   useEffect(() => {
-    generateMap();
-    spawnPlayer();
-    populateMap();
-    setMapDisplay(state.map.drawMap());
+    init();
     window.addEventListener('keydown', handleKeyPress);
   }, []);
 
@@ -165,6 +236,13 @@ function Game() {
     };
   }, []);
 
+  function init() {
+    dispatch({ type: RESET_STATE });
+    generateMap();
+    spawnPlayer();
+    populateMap();
+    setMapDisplay(state.map.drawMap());
+  }
 
 
   return (
