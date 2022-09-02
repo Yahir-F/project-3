@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
+import { Link } from 'react-router-dom';
 
 
 
@@ -13,7 +14,6 @@ function Header() {
     event.preventDefault();
     Auth.logout();
   };
-  const [value, setValue] = React.useState(0);
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
@@ -29,15 +29,15 @@ function Header() {
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             Roguescape
           </Typography>
-          <Button
-            color="inherit"
-            href='/'>
-            Home
+          <Button color="inherit">
+            <Link to='/' style={{ textDecoration: 'none', color: 'white' }}>
+              Home
+            </Link>
           </Button>
-          <Button
-            color="inherit"
-            href='/Game'>
-            Game
+          <Button color="inherit">
+            <Link to='/game' style={{ textDecoration: 'none', color: 'white' }}>
+              Game
+            </Link>
           </Button>
 
           {Auth.loggedIn() ? (
@@ -45,18 +45,14 @@ function Header() {
               color='inherit'
               onClick={logout}
               href='/'>
-
               Logout
             </Button>
           ) : (
-
-            <Button
-              color='inherit'
-              href='/login'>
-              Login
+            <Button color='inherit'>
+              <Link to='/login' style={{ textDecoration: 'none', color: 'white' }}>
+                Login
+              </Link>
             </Button>
-
-
           )}
 
         </Toolbar>
