@@ -15,6 +15,7 @@ class Map {
 
     createMap() {
         const digger = new ROT.Map.Digger(this.width, this.height);
+        this.freeTiles = []
         const diggerCallback = (x, y, value) => {
             this.map[x][y] = (value === 0) ? new Tile(x, y, 'floor') : new Tile(x, y, 'wall');
             if(!value) {

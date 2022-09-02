@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { CREATE_MAP, ADD_ENTITY } from '../utils/actions';
+import { CREATE_MAP, ADD_ENTITY, MOVE } from '../utils/actions';
 import _ from 'lodash'
+import Entity from './entity';
 
 function Game() {
 
@@ -11,8 +12,6 @@ function Game() {
 
   function getFreeTile() {
     const randNum = Math.floor(Math.random() * state.map.freeTiles.length);
-    console.log(randNum);
-    console.log(state.map.freeTiles);
     return state.map.freeTiles[randNum];
   }
 
@@ -24,7 +23,6 @@ function Game() {
 
   function spawnPlayer() {
     const freeTile = getFreeTile();
-    console.log(freeTile);
     const player = {
       x: freeTile.x,
       y: freeTile.y,
@@ -38,7 +36,7 @@ function Game() {
     });
   }
 
-  function handleKeyPress(e) {
+  const handleKeyPress = _.throttle((e) => {
     let vector;
     switch(e.code) {
       case 'ArrowLeft':
@@ -59,7 +57,7 @@ function Game() {
     if(vector) {
       handleMove(vector);
     }
-  }
+  }, 100)
 
   function handleMove(vector) {
     const player = state.entities.player;
@@ -68,22 +66,49 @@ function Game() {
       x: player.x + vector.x,
       y: player.y + vector.y
     }
+
     console.log(player);
     console.log(map.map[newCoords.x][newCoords.y]);
+
     if(_.inRange(newCoords.x, 0, map.width) && 
       _.inRange(newCoords.y, 0, map.height) &&
       map.map[newCoords.x][newCoords.y].tileClass !== 'wall') {
-        console.log(newCoords);
-    }
 
+        let newEntity;
+        if(map.map[newCoords.x][newCoords.y] instanceof Entity) {
+          newEntity = map.map[newCoords.x][newCoords.y];
+        }
+
+        if(!newEntity) {
+          dispatch({
+            type: MOVE,
+            payload: {
+              entity: player,
+              vector: vector
+            }
+          });
+
+          /* THIS IS VERY INEFFICIENT - IT RERENDERS THE WHOLE GAME FOR EVERY MOVE*/
+          /* FIX THIS LATER SO IT ONLY REDRAWS THE ELEMENTS THAT CHANGED */
+          setMapDisplay(state.map.drawMap())
+          return;
+        }
+
+        switch(newEntity.tileClass) {
+          /* Insert cases for health, weapon, enemy, etc. */
+          default:
+            break
+        }
+    }
   }
+
   
   // start game when Game component is loaded
   useEffect(() =>{
     generateMap()
     spawnPlayer()
     setMapDisplay(state.map.drawMap());
-    window.addEventListener('keydown', handleKeyPress)
+    window.addEventListener('keydown', handleKeyPress);
   }, [])
 
   // remove event listener when Game component is unmounted
