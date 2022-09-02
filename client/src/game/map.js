@@ -10,16 +10,16 @@ class Map {
         for(let i = 0; i < this.map.length; i++) {
             this.map[i] = new Array(this.height);
         }
-        this.freeTiles = [];
+        this.freeTiles = {};
     }
 
     createMap() {
         const digger = new ROT.Map.Digger(this.width, this.height);
-        this.freeTiles = []
+        this.freeTiles = {};
         const diggerCallback = (x, y, value) => {
             this.map[x][y] = (value === 0) ? new Tile(x, y, 'floor') : new Tile(x, y, 'wall');
             if(!value) {
-                this.freeTiles.push(this.map[x][y]);
+                this.freeTiles[`${x}x${y}`] = this.map[x][y];
             }
         };
         digger.create(diggerCallback);
