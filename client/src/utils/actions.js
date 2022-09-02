@@ -1,3 +1,6 @@
+export const CREATE_MAP = 'CREATE_MAP'
+export const UPDATE_MAP = 'UPDATE_MAP'
+
 export const DAMAGE = 'DAMAGE'
 export const HEAL = 'HEAL'
 export const GAIN_XP = 'GAIN_XP'

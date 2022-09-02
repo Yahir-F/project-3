@@ -1,5 +1,5 @@
 .tile {
-    width: 25px;
+    width: 20px;
     display: inline-block;
 }
 
@@ -11,11 +11,15 @@
     background-color: black;
 }
 
+.player {
+    background-color: blue;
+}
+
 .row, .tile {
     margin: 0px;
     padding: 0px;
     border-style: solid;
     border-color: black;
     border-width: 0px;
-    height: 25px;
-  }
+    height: 20px;
+}
