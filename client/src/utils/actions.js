@@ -1,0 +1,12 @@
+export const CREATE_MAP = 'CREATE_MAP'
+export const UPDATE_MAP = 'UPDATE_MAP'
+
+export const DAMAGE = 'DAMAGE'
+export const HEAL = 'HEAL'
+export const GAIN_XP = 'GAIN_XP'
+export const LEVEL_UP = 'LEVEL_UP'
+//export const SET_COINS = 'SET_COINS'
+export const MOVE = 'MOVE'
+export const SET_LOCATION = 'SET_LOCATION'
+export const ADD_ENTITY = 'ADD_ENTITY'
+export const REMOVE_ENTITY = 'REMOVE_ENTITY'
