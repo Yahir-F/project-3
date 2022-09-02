@@ -1,11 +1,14 @@
 import React from 'react'
 import Game from '../../game/game'
+import GameProvider from '../../utils/GameContext'
 
 function Gamepage() {
 
   return (
     <div style={{"textAlign":"center"}}>
-      <Game/>
+      <GameProvider>
+        <Game/>
+      </GameProvider>
     </div>
   )
 }
