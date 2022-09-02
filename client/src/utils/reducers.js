@@ -3,7 +3,8 @@ import Map from '../game/map';
 import {CREATE_MAP, UPDATE_MAP, ADD_ENTITY} from './actions'
 
 const initialState = {
-    map: new Map(50,50,10)
+    map: new Map(50,50,10),
+    entities: {}
 }
 
 function reducer(state = initialState, action) {
@@ -22,11 +23,17 @@ function reducer(state = initialState, action) {
                 action.payload.x,
                 action.payload.y,
                 action.payload.tileClass,
+                action.payload.entityName,
                 action.payload.attributes);
             updatedMap.map[action.payload.x][action.payload.y] = newEntity;
+            const newEntities = {
+                ...state.entities,
+                    [action.payload.entityName]: newEntity
+            }
+            state.entities = newEntities;
             return {
                 ...state,
-                map: updatedMap
+                map: updatedMap,
             }
         default:
             return state

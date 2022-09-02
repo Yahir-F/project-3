@@ -24,14 +24,18 @@ class Map {
         digger.create(diggerCallback);
     };
 
-    /* drawMap(coords) {
-        for (var key in coords) {
-            var parts = key.split(",");
-            var x = parseInt(parts[0]);
-            var y = parseInt(parts[1]);
-            this.map[x][y] = ".";
+    drawMap() {
+        let rows = [];
+        let row;
+        for(let y = 0; y < this.height; y++) {
+            row = [];
+            for(let x = 0; x < this.width; x++) {
+                row.push(<span className={`tile ${this.map[x][y].tileClass}`} key={x}></span>)
+            }
+            rows.push(<div className='row' key={y}>{row}</div>)
         }
-    }; */
+        return (rows);
+    };
 
 }
 

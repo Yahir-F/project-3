@@ -1,5 +1,5 @@
 .tile {
-    width: 20px;
+    width: 10px;
     display: inline-block;
 }
 
@@ -21,5 +21,5 @@
     border-style: solid;
     border-color: black;
     border-width: 0px;
-    height: 20px;
+    height: 10px;
 }
