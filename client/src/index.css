@@ -1,3 +1,7 @@
+html, body {
+    margin: 0
+}
+
 .tile {
     width: 10px;
     display: inline-block;
@@ -13,6 +17,14 @@
 
 .player {
     background-color: blue;
+}
+
+.health {
+    background-color: green;
+}
+
+.enemy {
+    background-color: red;
 }
 
 .row, .tile {
