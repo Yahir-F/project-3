@@ -1,14 +1,69 @@
-import React from 'react'
+import React from 'react';
+import Auth from '../utils/auth';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import Button from '@mui/material/Button';
 
-import Navigation from './Navigation'
+
 
 function Header() {
+  const logout = (event) => {
+    event.preventDefault();
+    Auth.logout();
+  };
+  const [value, setValue] = React.useState(0);
   return (
-    <div>
-        <h1>Header</h1>
-        <Navigation/>
-    </div>
-  )
-}
+    <Box sx={{ flexGrow: 1 }}>
+      <AppBar position="static">
+        <Toolbar>
+          <Box
+            size="large"
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            sx={{ mr: 2 }}
+          >
+          </Box>
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+            Roguescape
+          </Typography>
+          <Button
+            color="inherit"
+            href='/'>
+            Home
+          </Button>
+          <Button
+            color="inherit"
+            href='/Game'>
+            Game
+          </Button>
 
-export default Header
+          {Auth.loggedIn() ? (
+            <Button
+              color='inherit'
+              onClick={logout}
+              href='/'>
+
+              Logout
+            </Button>
+          ) : (
+
+            <Button
+              color='inherit'
+              href='/login'>
+              Login
+            </Button>
+
+
+          )}
+
+        </Toolbar>
+
+      </AppBar>
+
+    </Box>
+  );
+}
+export default Header;

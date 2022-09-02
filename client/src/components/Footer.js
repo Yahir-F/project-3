@@ -1,9 +1,34 @@
-import React from 'react'
+import React from 'react';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import GitHubIcon from '@mui/icons-material/GitHub';
 
 function Footer() {
+  const [value, setValue] = React.useState(0);
   return (
-    <div>Footer</div>
-  )
-}
+    <Box sx={{ flexGrow: 1, position: 'fixed', bottom: 0, left: 0, right: 0 }}>
+      <AppBar position="static">
+        <Toolbar>
+          <Box
+            size="large"
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+          >
+          </Box>
+          <Typography variant="h6" sx={{ justifyContent: 'center' }} margin='auto'>
+          <GitHubIcon sx={{"&:hover":{color:'purple', cursor:'grab'}}}onClick={event =>  window.location.href='https://github.com/Yahir-F/roguescape'} />
 
-export default Footer
+          </Typography>
+        
+
+        </Toolbar>
+
+      </AppBar>
+
+    </Box>
+  );
+}
+export default Footer;

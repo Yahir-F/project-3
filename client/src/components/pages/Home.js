@@ -1,8 +1,9 @@
+import { Box } from '@mui/material'
 import React from 'react'
 
 function Home() {
   return (
-    <div>Home</div>
+    <Box sx={{ flexGrow: 1, position: 'fixed', bottom: 0, left: 0, right: 0 }}>WIP</Box>
   )
 }
 
