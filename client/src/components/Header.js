@@ -6,8 +6,7 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom';
-
-
+import brick from "../images/brick2.jpg"
 
 function Header() {
   const logout = (event) => {
@@ -16,14 +15,14 @@ function Header() {
   };
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
+      <AppBar sx={{backgroundImage: `url(${brick})`}} position="static">
         <Toolbar>
           <Box
+        
             size="large"
             edge="start"
-            color="inherit"
             aria-label="menu"
-            sx={{ mr: 2 }}
+            sx={{ mr: 2 , backgroundImage: `url(${brick})`}}
           >
           </Box>
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
