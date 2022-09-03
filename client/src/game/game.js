@@ -5,12 +5,33 @@ import _ from 'lodash';
 import { CREATE_MAP, ADD_ENTITY, MOVE, HEAL, REMOVE_ENTITY, RESET_STATE, DAMAGE, GAIN_XP } from '../utils/actions';
 import Entity from './entity';
 import Auth from '../utils/auth';
+import {saveState} from '../utils/api';
 
 function Game() {
 
   const [mapDisplay, setMapDisplay] = useState();
   const state = useSelector(state => state);
   const dispatch = useDispatch();
+
+  async function handleSave() {
+    if(!Auth.loggedIn()) {
+      alert("Please log in to save")
+    }
+    try {
+      const response = await saveState({
+        _id: Auth.getProfile().data._id,
+        saveState: state
+      });
+      const data = response.json();
+      if(!response.ok) {
+        alert(data.message)
+      } else {
+        alert("Your data is saved!")
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   function getFreeTile() {
     const randNum = Math.floor(Math.random() * Object.keys(state.map.freeTiles).length);
@@ -254,12 +275,14 @@ function Game() {
           ) : (
             <h3>Not logged in</h3>
           )}
+          <h4>Floor: {state.floor}</h4>
           <ul>
             <li>Health: {state.entities.player.attributes.health}</li>
             <li>XP: {state.entities.player.attributes.xp}</li>
             <li>Level: {state.entities.player.attributes.level}</li>
             <li>Current Damage: {state.entities.player.attributes.damage}</li>
           </ul>
+          <button onClick={handleSave}>Save Game</button>
         </div>
         <div>
           {mapDisplay}
