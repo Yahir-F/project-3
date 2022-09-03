@@ -4,12 +4,12 @@ import Typography from '@mui/material/Typography';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import GitHubIcon from '@mui/icons-material/GitHub';
+import brick from "../images/brick2.jpg"
 
 function Footer() {
-  const [value, setValue] = React.useState(0);
   return (
     <Box sx={{ flexGrow: 1, position: 'fixed', bottom: 0, left: 0, right: 0 }}>
-      <AppBar position="static">
+      <AppBar sx={{backgroundImage: `url(${brick})`}} position="static">
         <Toolbar>
           <Box
             size="large"
