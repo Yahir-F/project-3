@@ -6,6 +6,7 @@ const {
   getSingleUser,
   createUser,
   login,
+  saveState
   } = require('../../controllers/userController');
   
 
@@ -15,6 +16,8 @@ const {
 
   router.route('/me').get(authMiddleware, getSingleUser);
 
-  router.route('/:userId').get(getSingleUser).delete();
+  router.route('/:userId').get(authMiddleware, getSingleUser).delete();
+
+  router.route('/save').post(saveState);
 
   module.exports = router;
