@@ -1,7 +1,6 @@
 import Main from './components/Main'
 import React from 'react';
 import Particles from "react-particles";
-import { Engine } from "tsparticles-engine";
 import { loadStarsPreset } from "tsparticles-preset-stars";
 import { useCallback } from 'react';
 
