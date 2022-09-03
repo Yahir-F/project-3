@@ -49,7 +49,7 @@ const SignupForm = (props) => {
     };
     return (
 
-        <Card sx={{backgroundColor: 'white'}}>
+        <Card sx={{backgroundColor: 'transparent', paddingBottom:'60px'}}>
         <CardContent>
           <Typography sx={{color:'white',bgcolor:'primary.main', padding: '20px'}} width='30%' margin='auto'>
           <Typography gutterBottom variant='h4'sx={{display: 'flex',justifyContent: 'center'}}>Signup</Typography>
