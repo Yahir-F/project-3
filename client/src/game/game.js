@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import _ from 'lodash';
 
-import { CREATE_MAP, ADD_ENTITY, MOVE, HEAL, REMOVE_ENTITY, RESET_STATE, DAMAGE, GAIN_XP } from '../utils/actions';
+import { CREATE_MAP, ADD_ENTITY, MOVE, HEAL, REMOVE_ENTITY, RESET_STATE, DAMAGE, GAIN_XP, LOAD_STATE } from '../utils/actions';
 import Entity from './entity';
 import Auth from '../utils/auth';
-import {saveState} from '../utils/api';
+import {getMe, saveState} from '../utils/api';
 
 function Game() {
 
@@ -13,36 +13,16 @@ function Game() {
   const state = useSelector(state => state);
   const dispatch = useDispatch();
 
-  async function handleSave() {
-    if(!Auth.loggedIn()) {
-      alert("Please log in to save")
-    }
-    try {
-      const response = await saveState({
-        _id: Auth.getProfile().data._id,
-        saveState: state
-      });
-      const data = response.json();
-      if(!response.ok) {
-        alert(data.message)
-      } else {
-        alert("Your data is saved!")
-      }
-    } catch (error) {
-      console.log(error);
-    }
+  function generateMap() {
+    dispatch({
+      type: CREATE_MAP
+    });
   }
 
   function getFreeTile() {
     const randNum = Math.floor(Math.random() * Object.keys(state.map.freeTiles).length);
     const key = Object.keys(state.map.freeTiles).splice(randNum, 1)[0];
     return key;
-  }
-
-  function generateMap() {
-    dispatch({
-      type: CREATE_MAP
-    });
   }
 
   function spawnPlayer() {
@@ -212,7 +192,7 @@ function Game() {
             // check if player died
             if (enemyDamage >= playerHealth) {
               alert("YOU DIED");
-              init();
+              reset();
               return;
             }
           } else {
@@ -243,21 +223,54 @@ function Game() {
     }
   }
 
+  async function handleSave() {
+    if(!Auth.loggedIn()) {
+      alert("Please log in to save")
+    }
+    try {
+      const response = await saveState({
+        _id: Auth.getProfile().data._id,
+        saveState: state
+      });
+      const data = response.json();
+      if(!response.ok) {
+        alert(data.message)
+      } else {
+        alert("Your data is saved!")
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
-  // start game when Game component is loaded
-  useEffect(() => {
-    init();
-    window.addEventListener('keydown', handleKeyPress);
-  }, []);
+  async function loadState() {
+    const response = await getMe(Auth.getToken());
+    const data = await response.json();
+    console.log(data);
+    if(!data.saveState) {
+      return false;
+    }
+    dispatch({type: LOAD_STATE, payload: {state: data.saveState}});
+    return true;
+  }
 
-  // remove event listener when Game component is unmounted
-  useEffect(() => {
-    return () => {
-      window.removeEventListener('keydown', handleKeyPress);
-    };
-  }, []);
+  async function handleLoad() {
+    let x = {...state}
+    console.log(x);
+    if(Auth.loggedIn()) {
+      const hasState = await loadState();
+      if(!hasState) {
+        alert("No save data found");
+        return;
+      }
+      setMapDisplay(state.map.drawMap());
+    } else {
+      alert("Please log in to load data")
+    }
+    console.log(state);
+  }
 
-  function init() {
+  function reset() {
     dispatch({ type: RESET_STATE });
     generateMap();
     spawnPlayer();
@@ -265,17 +278,22 @@ function Game() {
     setMapDisplay(state.map.drawMap());
   }
 
+  // start game when Game component is loaded
+  useEffect(() => {
+    reset();
+  }, []);
 
   return (
     <>
-      <div onKeyDown={handleKeyPress} style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
         <div>
           {Auth.loggedIn() ? (
             <h3>{`${Auth.getProfile().data.username}'s Dungeon`}</h3>
           ) : (
             <h3>Not logged in</h3>
           )}
-          <h4>Floor: {state.floor}</h4>
+          <h4>Floor: </h4>
+          {console.log(state)}
           <ul>
             <li>Health: {state.entities.player.attributes.health}</li>
             <li>XP: {state.entities.player.attributes.xp}</li>
@@ -283,8 +301,9 @@ function Game() {
             <li>Current Damage: {state.entities.player.attributes.damage}</li>
           </ul>
           <button onClick={handleSave}>Save Game</button>
+          <button onClick={handleLoad}>Load Game</button>
         </div>
-        <div>
+        <div tabIndex={0} onKeyDown={handleKeyPress}>
           {mapDisplay}
         </div>
       </div>
