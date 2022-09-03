@@ -13,7 +13,7 @@ function Home() {
     <CssBaseline />
     <Box sx={{color: "white", padding:'30px', }}>
     <Container maxWidth="sm" sx={{ margin: "20px auto", paddingTop: "50px" }}>
-      <Box sx={{color: "white", padding:'30px', backgroundColor:'black' }}>
+      <Box sx={{color: "lightblue", padding:'30px', }}>
         <Typography sx={{ textAlign: "center" }}>
           WELCOME TO ROGUESCAPE
           <br />
