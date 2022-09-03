@@ -1,7 +1,7 @@
 import Entity from '../game/entity';
 import Map from '../game/map';
 import Tile from '../game/tile';
-import { CREATE_MAP, UPDATE_MAP, RESET_STATE ,ADD_ENTITY, REMOVE_ENTITY, MOVE, HEAL, DAMAGE, GAIN_XP } from './actions';
+import { CREATE_MAP, UPDATE_MAP, RESET_STATE ,ADD_ENTITY, REMOVE_ENTITY, MOVE, HEAL, DAMAGE, GAIN_XP, LOAD_STATE } from './actions';
 import _ from 'lodash';
 
 const initialState = {
@@ -25,6 +25,14 @@ const initialState = {
 
 function reducer(state = initialState, action) {
     switch (action.type) {
+        case LOAD_STATE: 
+            _.assign(state, action.payload.state)
+            state.map = Map.constructMap(state.map);
+            for(let key in state.entities) {
+                let tempEntity = {...state.entities[key]}
+                state.entities[key] = new Entity(tempEntity.x, tempEntity.y, tempEntity.tileClass, tempEntity.entityName, tempEntity.attributes);
+            }
+            return state;
         case CREATE_MAP:
             state.map.createMap();
             return state;

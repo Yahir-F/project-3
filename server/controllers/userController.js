@@ -16,7 +16,7 @@ module.exports = {
 
   async getSingleUser(req, res) {
     try {
-      const user = await User.findOne({ _id: req.user ? req.user._id : req.params.userId });
+      const user = await User.findOne({ _id: req.user ? req.user._id : req.body._id });
       if (!user) {
         return res.status(400).json({ message: 'Cannot find user with given id' });
       }
@@ -57,5 +57,19 @@ module.exports = {
     }
   },
 
-
+  async saveState(req, res) {
+    try {
+      const user = await User.findOneAndUpdate(
+        { _id: req.user ? req.user._id : req.body._id },
+        {$set: {saveState: req.body.saveState}},
+        {new: true}
+      );
+      if(!user) {
+        return res.status(400).json({ message: 'Unable to save data' });
+      }
+      res.json(user);
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  }
 };

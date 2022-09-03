@@ -38,6 +38,14 @@ class Map {
         return (rows);
     };
 
+    static constructMap(map) {
+        let tempMap = {...map};
+        map = new Map(tempMap.width, tempMap.height);
+        map.map = tempMap.map;
+        map.freeTiles = tempMap.freeTiles;
+        return map
+    }
+
 }
 
 export default Map;
