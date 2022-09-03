@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import _ from 'lodash';
+import { Container, Box, Grid, Card, CardContent, Button, Typography, CardActions, List, ListItem } from '@mui/material';
 
 import { CREATE_MAP, ADD_ENTITY, MOVE, HEAL, REMOVE_ENTITY, RESET_STATE, DAMAGE, GAIN_XP, LOAD_STATE } from '../utils/actions';
 import Entity from './entity';
 import Auth from '../utils/auth';
-import {getMe, saveState} from '../utils/api';
+import { getMe, saveState } from '../utils/api';
 
 function Game() {
 
@@ -111,7 +112,7 @@ function Game() {
   function handleMove(vector) {
 
     console.log(state);
-    
+
     const player = state.entities.player;
     const map = state.map;
     const newCoords = {
@@ -209,8 +210,8 @@ function Game() {
             });
             dispatch({
               type: GAIN_XP,
-              payload: {value: 10}
-            })
+              payload: { value: 10 }
+            });
             console.log(`Gained ${10} XP`);
           }
           break;
@@ -224,8 +225,8 @@ function Game() {
   }
 
   async function handleSave() {
-    if(!Auth.loggedIn()) {
-      alert("Please log in to save")
+    if (!Auth.loggedIn()) {
+      alert("Please log in to save");
     }
     try {
       const response = await saveState({
@@ -233,10 +234,10 @@ function Game() {
         saveState: state
       });
       const data = response.json();
-      if(!response.ok) {
-        alert(data.message)
+      if (!response.ok) {
+        alert(data.message);
       } else {
-        alert("Your data is saved!")
+        alert("Your data is saved!");
       }
     } catch (error) {
       console.log(error);
@@ -247,25 +248,25 @@ function Game() {
     const response = await getMe(Auth.getToken());
     const data = await response.json();
     console.log(data);
-    if(!data.saveState) {
+    if (!data.saveState) {
       return false;
     }
-    dispatch({type: LOAD_STATE, payload: {state: data.saveState}});
+    dispatch({ type: LOAD_STATE, payload: { state: data.saveState } });
     return true;
   }
 
   async function handleLoad() {
-    let x = {...state}
+    let x = { ...state };
     console.log(x);
-    if(Auth.loggedIn()) {
+    if (Auth.loggedIn()) {
       const hasState = await loadState();
-      if(!hasState) {
+      if (!hasState) {
         alert("No save data found");
         return;
       }
       setMapDisplay(state.map.drawMap());
     } else {
-      alert("Please log in to load data")
+      alert("Please log in to load data");
     }
     console.log(state);
   }
@@ -284,30 +285,43 @@ function Game() {
   }, []);
 
   return (
-    <>
-      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-        <div>
-          {Auth.loggedIn() ? (
-            <h3>{`${Auth.getProfile().data.username}'s Dungeon`}</h3>
-          ) : (
-            <h3>Not logged in</h3>
-          )}
-          <h4>Floor: </h4>
-          {console.log(state)}
-          <ul>
-            <li>Health: {state.entities.player.attributes.health}</li>
-            <li>XP: {state.entities.player.attributes.xp}</li>
-            <li>Level: {state.entities.player.attributes.level}</li>
-            <li>Current Damage: {state.entities.player.attributes.damage}</li>
-          </ul>
-          <button onClick={handleSave}>Save Game</button>
-          <button onClick={handleLoad}>Load Game</button>
-        </div>
-        <div tabIndex={0} onKeyDown={handleKeyPress}>
-          {mapDisplay}
-        </div>
-      </div>
-    </>
+    <Container maxWidth="md" sx={{ marginBottom: '80px' }}>
+      <Box sx={{
+        display: 'flex', flexDirection: 'row', justifyContent: 'center',
+        backgroundColor: 'whitesmoke', padding: '20px', margin: '20px auto',
+        width: 'fit-content', height: '100%', borderRadius: '5px'
+      }}>
+        <Grid container sx={{ justifyContent: 'center' }}>
+          <Grid item sx={{ margin: '0 20px 10px 0' }}>
+            <Card>
+              <CardContent>
+                {Auth.loggedIn() ? (
+                  <Typography variant='h6'>{`${Auth.getProfile().data.username}'s Dungeon`}</Typography>
+                ) : (
+                  <Typography variant='h6'>Not logged in</Typography>
+                )}
+                <Typography variant='p'>Floor: </Typography>
+                {console.log(state)}
+                <List>
+                  <ListItem>Health: {state.entities.player.attributes.health}</ListItem>
+                  <ListItem>XP: {state.entities.player.attributes.xp}</ListItem>
+                  <ListItem>Level: {state.entities.player.attributes.level}</ListItem>
+                  <ListItem>Current Damage: {state.entities.player.attributes.damage}</ListItem>
+                </List>
+
+              </CardContent>
+              <CardActions>
+                <Button onClick={handleSave}>Save Game</Button>
+                <Button onClick={handleLoad}>Load Game</Button>
+              </CardActions>
+            </Card>
+          </Grid>
+          <Grid item tabIndex={0} onKeyDown={handleKeyPress}>
+            {mapDisplay}
+          </Grid>
+        </Grid>
+      </Box>
+    </Container>
   );
 }
 
