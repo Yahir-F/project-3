@@ -32,6 +32,14 @@ function Game() {
     return key;
   }
 
+  function calculateStats(base, level) {
+    return Math.floor(((2*base*level)/100)+level+10)
+  }
+
+  function calculateLevel(xp) {
+    return Math.floor((4/5)*(xp^3));
+  }
+
   function spawnPlayer() {
     const key = getFreeTile();
     const freeTile = state.map.freeTiles[key];
@@ -43,7 +51,8 @@ function Game() {
       attributes: {
         health: 100,
         damage: 5,
-        xp: 0
+        xp: 0,
+        level: 1,
       }
     };
     dispatch({
@@ -148,9 +157,6 @@ function Game() {
       x: player.x + vector.x,
       y: player.y + vector.y
     };
-
-    console.log(player);
-    console.log(map.map[newCoords.x][newCoords.y]);
 
     if (_.inRange(newCoords.x, 0, map.width) &&
       _.inRange(newCoords.y, 0, map.height) &&

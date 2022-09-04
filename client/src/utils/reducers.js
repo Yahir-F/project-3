@@ -15,12 +15,13 @@ const initialState = {
             attributes: {
                 health: 1,
                 xp: 0,
-                level: 0,
+                level: 1,
                 damage: 0,
                 /* insert more attributes */
             }
         }
-    }
+    },
+    floor: 1
 };
 
 function reducer(state = initialState, action) {
