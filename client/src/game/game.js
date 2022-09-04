@@ -4,7 +4,7 @@ import _ from 'lodash';
 import { useSwipeable } from 'react-swipeable';
 import { Container, Box, Grid, Card, CardContent, Button, Typography, CardActions, List, ListItem } from '@mui/material';
 
-import { CREATE_MAP, ADD_ENTITY, MOVE, HEAL, REMOVE_ENTITY, RESET_STATE, DAMAGE, GAIN_XP, LOAD_STATE } from '../utils/actions';
+import { CREATE_MAP, ADD_ENTITY, MOVE, HEAL, REMOVE_ENTITY, RESET_STATE, DAMAGE, GAIN_XP, LOAD_STATE, LEVEL_UP } from '../utils/actions';
 import Entity from './entity';
 import Auth from '../utils/auth';
 import { getMe, saveState } from '../utils/api';
@@ -33,11 +33,11 @@ function Game() {
   }
 
   function calculateStats(base, level) {
-    return Math.floor(((2*base*level)/100)+level+10)
+    return Math.floor(((2*base*level)/30)+level)
   }
 
   function calculateLevel(xp) {
-    return Math.floor((4/5)*(xp^3));
+    return Math.floor((xp**0.5)/3);
   }
 
   function spawnPlayer() {
@@ -79,7 +79,7 @@ function Game() {
       });
     }
 
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 6; i++) {
       const freeTileKey = getFreeTile();
       const freeTile = state.map.freeTiles[freeTileKey];
       const newEnemy = {
@@ -247,6 +247,13 @@ function Game() {
               type: GAIN_XP,
               payload: { value: 10 }
             });
+            dispatch({
+              type: LEVEL_UP,
+              payload: {
+                stats: calculateStats,
+                level: calculateLevel
+              }
+            })
             console.log(`Gained ${10} XP`);
           }
           break;
