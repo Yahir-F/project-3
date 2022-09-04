@@ -10,6 +10,8 @@ function App() {
     await loadStarsPreset(engine)
     
   }
+  //Loading particles and sending it to the back To not overlap other page contents
+  
   const particlesLoaded = useCallback(async (container) => {
     await console.log(container);
     document.querySelector("#tsparticles canvas").style.zIndex = -10;
