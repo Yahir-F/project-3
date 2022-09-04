@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import _ from 'lodash';
+import Hammer from 'hammerjs'
 import { Container, Box, Grid, Card, CardContent, Button, Typography, CardActions, List, ListItem } from '@mui/material';
 
 import { CREATE_MAP, ADD_ENTITY, MOVE, HEAL, REMOVE_ENTITY, RESET_STATE, DAMAGE, GAIN_XP, LOAD_STATE } from '../utils/actions';
@@ -14,9 +15,14 @@ function Game() {
   const state = useSelector(state => state);
   const dispatch = useDispatch();
 
+  const windowWidth = window.innerWidth;
+
   function generateMap() {
+    const mapWidth = (windowWidth < 600) ? Math.floor(windowWidth/13) : 50;
+    const mapHeight = (windowWidth < 600) ? Math.floor(windowWidth/13) : 50;
     dispatch({
-      type: CREATE_MAP
+      type: CREATE_MAP,
+      payload:{width: mapWidth, height: mapHeight}
     });
   }
 
@@ -108,6 +114,33 @@ function Game() {
       handleMove(vector);
     }
   }, 100);
+
+  function handleSwipe(e) {
+    let vector;
+    const {overallVelocity, angle} = e;
+    if (Math.abs(overallVelocity) > .75) {
+      // swipe up
+      if (angle > -100 && angle < -80) {
+        vector = {x: 0, y: -1};
+      }
+      // swipe right
+      if (angle > -10 && angle < 10) {
+        vector = {x: 1, y: 0};
+      }
+      // swipe down
+      if (angle > 80 && angle < 100) {
+        vector = {x: 0, y: 1};
+      }
+      // swipe left
+      if (Math.abs(angle) > 170) {
+        vector = {x: -1, y: 0};
+      }
+    }
+    if (vector) {
+      e.preventDefault();
+      handleMove(vector);
+    }
+  }
 
   function handleMove(vector) {
 
@@ -283,6 +316,14 @@ function Game() {
   useEffect(() => {
     reset();
   }, []);
+
+  // set up touch functionality
+  useEffect(() => {
+    const touchElement = document.getElementById('root');
+    const hammertime = new Hammer(touchElement);
+    hammertime.get('swipe').set({direction: Hammer.DIRECTION_ALL});
+    hammertime.on('swipe', handleSwipe);
+  }, [])
 
   return (
     <Container maxWidth="md" sx={{ marginBottom: '80px' }}>
