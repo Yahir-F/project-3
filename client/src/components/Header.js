@@ -24,13 +24,14 @@ function Header() {
             size="large"
             edge="start"
             aria-label="menu"
-            sx={{ mr: 2, backgroundImage: `url(${brick})` }}
+            sx={{ mr: 2,  }}
           >
+            
           </Box>
 
           <img src={logo} alt="logo" width='20px' height='20px'></img>
           <Box sx={{flexGrow:1}}>
-          <Typography variant="h6" sx={{cursor:'grab',"&:hover":{ color:'gray' }}}onClick={event =>  window.location.href='/'} >
+          <Typography variant="h6" component="span" sx={{cursor:'grab',"&:hover":{ color:'gray' }}}onClick={event =>  window.location.href='/'} >
             Roguescape
           </Typography>
           </Box>
