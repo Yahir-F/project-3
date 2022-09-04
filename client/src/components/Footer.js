@@ -19,6 +19,7 @@ function Footer() {
           >
           </Box>
           <Typography variant="h6" sx={{ justifyContent: 'center' }} margin='auto'>
+            {/* Redirects User page when clicking on Github */}
           <GitHubIcon sx={{"&:hover":{color:'purple', cursor:'grab'}}}onClick={event =>  window.location.href='https://github.com/Yahir-F/roguescape'} />
 
           </Typography>

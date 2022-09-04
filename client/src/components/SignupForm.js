@@ -8,7 +8,7 @@ import TextField from '@mui/material/TextField'
 import InputLabel from '@mui/material/InputLabel';
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography';
-
+import brick from "../images/brick.png"
 
 const SignupForm = (props) => {
     const [formState, setFormState] = useState({ username: '', email: '', password: '' });
@@ -51,7 +51,7 @@ const SignupForm = (props) => {
 
         <Card sx={{backgroundColor: 'transparent', paddingBottom:'60px'}}>
         <CardContent>
-          <Typography sx={{color:'white',bgcolor:'primary.main', padding: '20px'}} width='30%' margin='auto'>
+          <Typography sx={{color:'white',backgroundImage: `url(${brick})`, padding: '20px'}} width='30%' margin='auto'>
           <Typography gutterBottom variant='h4'sx={{display: 'flex',justifyContent: 'center'}}>Signup</Typography>
           <Typography variant='body1'sx={{display: 'flex',justifyContent: 'center'}}>Create An Account </Typography>
           </Typography>
