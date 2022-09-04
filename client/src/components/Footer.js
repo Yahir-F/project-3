@@ -5,6 +5,7 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import brick from "../images/brick2.jpg"
+import logo from "../images/logo.png"
 
 function Footer() {
   return (

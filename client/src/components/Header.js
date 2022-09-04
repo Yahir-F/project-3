@@ -7,6 +7,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom';
 import brick from "../images/brick2.jpg"
+import logo from "../images/logo.png"
 
 function Header() {
   const logout = (event) => {
@@ -26,10 +27,9 @@ function Header() {
             sx={{ mr: 2, backgroundImage: `url(${brick})` }}
           >
           </Box>
-          <Typography variant="h6" sx={{flexGrow:1}} onClick={event =>  window.location.href='/'}>
-            <Typography sx={{"&:hover":{color:'gray', cursor:'grab'}}}>
+          <img src={logo} alt="logo" width='20px' height='20px'></img>
+          <Typography variant="h6" sx={{flexGrow: 1,"&:hover":{ cursor:'grab', color:'gray' }}}onClick={event =>  window.location.href='/'} >
             Roguescape
-            </Typography>
           </Typography>
           <Button color="inherit">
             {/* Removing the underline on the button due to Links Nature */}

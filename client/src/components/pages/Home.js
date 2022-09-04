@@ -23,7 +23,7 @@ function Home() {
           <br />
           Only the Strongest Make it to the End!!! <br />
           This game was created for players with interests in Rougelike Games.{" "}
-          <br sx={{ backgroundColor: "yellow" }} />
+          <br  />
           CREATE AN ACCOUNT FOR THE BEST USER EXPERIENCE
         </Typography>
       </Box>
