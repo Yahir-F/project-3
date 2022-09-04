@@ -27,10 +27,13 @@ function Header() {
             sx={{ mr: 2, backgroundImage: `url(${brick})` }}
           >
           </Box>
+
           <img src={logo} alt="logo" width='20px' height='20px'></img>
-          <Typography variant="h6" sx={{flexGrow: 1,"&:hover":{ cursor:'grab', color:'gray' }}}onClick={event =>  window.location.href='/'} >
+          <Box sx={{flexGrow:1}}>
+          <Typography variant="h6" sx={{cursor:'grab',"&:hover":{ color:'gray' }}}onClick={event =>  window.location.href='/'} >
             Roguescape
           </Typography>
+          </Box>
           <Button color="inherit">
             {/* Removing the underline on the button due to Links Nature */}
             <Link to='/' style={{ textDecoration: 'none', color: 'white' }}>
