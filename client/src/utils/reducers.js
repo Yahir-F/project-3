@@ -34,6 +34,7 @@ function reducer(state = initialState, action) {
             }
             return state;
         case CREATE_MAP:
+            state.map = new Map(action.payload.width, action.payload.height);
             state.map.createMap();
             return state;
         case UPDATE_MAP:
