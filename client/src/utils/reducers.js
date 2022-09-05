@@ -1,7 +1,7 @@
 import Entity from '../game/entity';
 import Map from '../game/map';
 import Tile from '../game/tile';
-import { CREATE_MAP, UPDATE_MAP, RESET_STATE ,ADD_ENTITY, REMOVE_ENTITY, MOVE, HEAL, DAMAGE, GAIN_XP, LOAD_STATE } from './actions';
+import { CREATE_MAP, UPDATE_MAP, RESET_STATE, INCREASE_FLOOR ,ADD_ENTITY, REMOVE_ENTITY, MOVE, HEAL, DAMAGE, GAIN_XP, LOAD_STATE, LEVEL_UP, GAIN_COINS, GAIN_STATS, SPEND_COINS } from './actions';
 import _ from 'lodash';
 
 const initialState = {
@@ -13,14 +13,18 @@ const initialState = {
             tileClass: 'player',
             entityName: 'player',
             attributes: {
-                health: 1,
+                health: 100,
                 xp: 0,
-                level: 0,
-                damage: 0,
+                level: 1,
+                damage: 4,
+                coins: 100,
+                bonusDamage: 0,
+                bonusArmor: 0
                 /* insert more attributes */
             }
         }
-    }
+    },
+    floor: 1
 };
 
 function reducer(state = initialState, action) {
@@ -98,6 +102,38 @@ function reducer(state = initialState, action) {
         }
         case GAIN_XP: {
             state.entities.player.attributes.xp += action.payload.value;
+            return state;
+        }
+        case LEVEL_UP: {
+            console.log(state);
+            const currLevel = action.payload.level(state.entities.player.attributes.xp);
+            const newDamage = action.payload.stats(50, currLevel);
+            state.entities.player.attributes.level = currLevel;
+            state.entities.player.attributes.damage = newDamage;
+            return state;
+        }
+        case GAIN_COINS: {
+            state.entities.player.attributes.coins += action.payload.coins;
+            return state;
+        }
+        case SPEND_COINS: {
+            state.entities.player.attributes.coins -= action.payload.coins;
+            return state;
+        }
+        case GAIN_STATS: {
+            switch(action.payload.stat) {
+                case 'damage':
+                    state.entities.player.attributes.bonusDamage += action.payload.value;
+                    return state;
+                case 'armor': 
+                    state.entities.player.attributes.bonusArmor += action.payload.value;
+                    return state;
+                default:
+                    return state;
+            }
+        }
+        case INCREASE_FLOOR: {
+            state.floor += 1;
             return state;
         }
         default:
