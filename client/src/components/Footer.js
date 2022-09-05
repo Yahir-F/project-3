@@ -8,7 +8,7 @@ import brick from "../images/brick2.jpg"
 
 function Footer() {
   return (
-    <Box sx={{ flexGrow: 1, position: 'fixed', bottom: 0, left: 0, right: 0 }}>
+    <Box sx={{ flexGrow: 1, position: 'absolute', bottom: 0, left: 0, right: 0, width:'100%',height:'2.5rem' }}>
       <AppBar sx={{backgroundImage: `url(${brick})`}} position="static">
         <Toolbar>
           <Box

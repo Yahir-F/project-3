@@ -452,7 +452,7 @@ function Game() {
 
 
   return (
-    <Container maxWidth="md" sx={{ marginBottom: '80px' }}>
+    <Container maxWidth="md" sx={{  }}>
       <ToastContainer
         position="top-center"
         autoClose={5000}
