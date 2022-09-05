@@ -27,6 +27,10 @@ html, body {
     background-color: red;
 }
 
+.exit {
+    background-color: fuchsia;
+}
+
 .row, .tile {
     margin: 0px;
     padding: 0px;

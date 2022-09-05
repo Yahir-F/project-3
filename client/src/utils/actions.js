@@ -2,6 +2,7 @@ export const LOAD_STATE = 'LOAD_STATE'
 export const CREATE_MAP = 'CREATE_MAP'
 export const UPDATE_MAP = 'UPDATE_MAP'
 export const RESET_STATE = 'RESET_MAP'
+export const INCREASE_FLOOR = 'INCREASE_FLOOR'
 
 export const DAMAGE = 'DAMAGE'
 export const HEAL = 'HEAL'

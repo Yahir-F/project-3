@@ -1,7 +1,7 @@
 import Entity from '../game/entity';
 import Map from '../game/map';
 import Tile from '../game/tile';
-import { CREATE_MAP, UPDATE_MAP, RESET_STATE ,ADD_ENTITY, REMOVE_ENTITY, MOVE, HEAL, DAMAGE, GAIN_XP, LOAD_STATE, LEVEL_UP } from './actions';
+import { CREATE_MAP, UPDATE_MAP, RESET_STATE, INCREASE_FLOOR ,ADD_ENTITY, REMOVE_ENTITY, MOVE, HEAL, DAMAGE, GAIN_XP, LOAD_STATE, LEVEL_UP } from './actions';
 import _ from 'lodash';
 
 const initialState = {
@@ -13,10 +13,10 @@ const initialState = {
             tileClass: 'player',
             entityName: 'player',
             attributes: {
-                health: 1,
+                health: 100,
                 xp: 0,
                 level: 1,
-                damage: 0,
+                damage: 4,
                 /* insert more attributes */
             }
         }
@@ -107,6 +107,10 @@ function reducer(state = initialState, action) {
             const newDamage = action.payload.stats(50, currLevel);
             state.entities.player.attributes.level = currLevel;
             state.entities.player.attributes.damage = newDamage;
+            return state;
+        }
+        case INCREASE_FLOOR: {
+            state.floor += 1;
             return state;
         }
         default:

@@ -4,7 +4,7 @@ import _ from 'lodash';
 import { useSwipeable } from 'react-swipeable';
 import { Container, Box, Grid, Card, CardContent, Button, Typography, CardActions, List, ListItem } from '@mui/material';
 
-import { CREATE_MAP, ADD_ENTITY, MOVE, HEAL, REMOVE_ENTITY, RESET_STATE, DAMAGE, GAIN_XP, LOAD_STATE, LEVEL_UP } from '../utils/actions';
+import { CREATE_MAP, ADD_ENTITY, MOVE, HEAL, REMOVE_ENTITY, RESET_STATE, DAMAGE, GAIN_XP, LOAD_STATE, LEVEL_UP, INCREASE_FLOOR } from '../utils/actions';
 import Entity from './entity';
 import Auth from '../utils/auth';
 import { getMe, saveState } from '../utils/api';
@@ -33,11 +33,11 @@ function Game() {
   }
 
   function calculateStats(base, level) {
-    return Math.floor(((2*base*level)/30)+level)
+    return Math.floor(((2 * base * level) / 30) + level);
   }
 
   function calculateLevel(xp) {
-    return Math.floor((xp**0.5)/3);
+    return Math.floor((xp ** 0.5) / 3);
   }
 
   function spawnPlayer() {
@@ -49,10 +49,10 @@ function Game() {
       tileClass: 'player',
       entityName: 'player',
       attributes: {
-        health: 100,
-        damage: 5,
-        xp: 0,
-        level: 1,
+        health: state.entities.player.attributes.health,
+        damage: state.entities.player.attributes.damage,
+        xp: state.entities.player.attributes.xp,
+        level: state.entities.player.attributes.level,
       }
     };
     dispatch({
@@ -61,8 +61,11 @@ function Game() {
     });
   }
 
+
   function populateMap() {
-    for (let i = 0; i < 3; i++) {
+    const numHealth = Math.floor(Math.random() * 4) + 1;
+    console.log(numHealth);
+    for (let i = 0; i < numHealth; i++) {
       const freeTile = state.map.freeTiles[getFreeTile()];
       const newHealth = {
         x: freeTile.x,
@@ -79,17 +82,23 @@ function Game() {
       });
     }
 
-    for (let i = 0; i < 6; i++) {
+    const numEnemy = Math.floor(Math.random() * 4) + 2;
+
+    for (let i = 0; i < numEnemy; i++) {
       const freeTileKey = getFreeTile();
       const freeTile = state.map.freeTiles[freeTileKey];
+      const baseHealth = calculateStats(60, state.floor) + 10;
+      const healthVariance = Math.floor(Math.random() * (baseHealth / 10) - (baseHealth / 20));
+      const baseDamage = calculateStats(15, state.floor) + 5;
+      const damageVariance = Math.floor(Math.random() * (baseDamage / 10) - (baseDamage / 20));
       const newEnemy = {
         x: freeTile.x,
         y: freeTile.y,
         tileClass: 'enemy',
         entityName: 'enemy' + i,
         attributes: {
-          health: 20,
-          damage: 7
+          health: baseHealth + healthVariance,
+          damage: baseDamage + damageVariance
         }
       };
       dispatch({
@@ -98,7 +107,20 @@ function Game() {
       });
     }
 
-
+    {
+      let freeTile = state.map.freeTiles[getFreeTile()]; 
+      const newExit = {
+        x: freeTile.x,
+        y: freeTile.y,
+        tileClass: 'exit',
+        entityName: 'exit',
+        attributes: {}
+      };
+      dispatch({
+        type: ADD_ENTITY,
+        payload: newExit
+      });
+    }
   }
 
   const handleKeyPress = _.throttle((e) => {
@@ -120,6 +142,7 @@ function Game() {
         break;
     }
     if (vector) {
+      e.preventDefault();
       handleMove(vector);
     }
   }, 100);
@@ -143,6 +166,7 @@ function Game() {
         break;
     }
     if (vector) {
+      e.preventDefault();
       handleMove(vector);
     }
   }
@@ -243,9 +267,11 @@ function Game() {
               type: REMOVE_ENTITY,
               payload: { entityName: newEntity.entityName }
             });
+            const baseXP = Math.floor((5 * (state.floor) ** 2 + 5));
+            const xpVariance = Math.floor(Math.random() * (baseXP / 5) - (baseXP / 10));
             dispatch({
               type: GAIN_XP,
-              payload: { value: 10 }
+              payload: { value: baseXP + xpVariance }
             });
             dispatch({
               type: LEVEL_UP,
@@ -253,9 +279,19 @@ function Game() {
                 stats: calculateStats,
                 level: calculateLevel
               }
-            })
-            console.log(`Gained ${10} XP`);
+            });
+            console.log(`Gained ${baseXP + xpVariance} XP`);
           }
+          break;
+        }
+        case 'exit': {
+          dispatch({
+            type: INCREASE_FLOOR
+          });
+          generateMap();
+          spawnPlayer();
+          populateMap();
+          setMapDisplay(state.map.drawMap());
           break;
         }
         default:
@@ -347,7 +383,7 @@ function Game() {
                 ) : (
                   <Typography variant='h6'>Not logged in</Typography>
                 )}
-                <Typography variant='p'>Floor: </Typography>
+                <Typography variant='p'>Floor: {state.floor}</Typography>
                 {console.log(state)}
                 <List>
                   <ListItem>Health: {state.entities.player.attributes.health}</ListItem>
