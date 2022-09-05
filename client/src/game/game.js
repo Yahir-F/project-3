@@ -2,9 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import _ from 'lodash';
 import { useSwipeable } from 'react-swipeable';
+import { FixedSizeList } from 'react-window';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { Container, Box, Grid, Card, CardContent, Button, Typography, CardActions, List, ListItem, ButtonGroup } from '@mui/material';
 
-import { CREATE_MAP, ADD_ENTITY, MOVE, HEAL, REMOVE_ENTITY, RESET_STATE, DAMAGE, GAIN_XP, LOAD_STATE, LEVEL_UP, INCREASE_FLOOR, GAIN_COINS, GAIN_STATS, SPEND_COINS } from '../utils/actions';
+import { CREATE_MAP, ADD_ENTITY, MOVE, HEAL, REMOVE_ENTITY, RESET_STATE, DAMAGE, GAIN_XP, LOAD_STATE, LEVEL_UP, INCREASE_FLOOR, GAIN_COINS, GAIN_STATS, SPEND_COINS, ADD_TO_LOG } from '../utils/actions';
 import Entity from './entity';
 import Auth from '../utils/auth';
 import { getMe, saveState } from '../utils/api';
@@ -24,6 +27,7 @@ function Game() {
       type: CREATE_MAP,
       payload: { width: mapWidth, height: mapHeight }
     });
+    addToLog("New map generated");
   }
 
   function getFreeTile() {
@@ -62,6 +66,7 @@ function Game() {
       type: ADD_ENTITY,
       payload: player
     });
+    addToLog("Player spawned");
   }
 
 
@@ -111,7 +116,7 @@ function Game() {
     }
 
     {
-      let freeTile = state.map.freeTiles[getFreeTile()]; 
+      let freeTile = state.map.freeTiles[getFreeTile()];
       const newExit = {
         x: freeTile.x,
         y: freeTile.y,
@@ -124,6 +129,7 @@ function Game() {
         payload: newExit
       });
     }
+    addToLog("Map populated");
   }
 
   const handleKeyPress = _.throttle((e) => {
@@ -169,7 +175,6 @@ function Game() {
         break;
     }
     if (vector) {
-      e.preventDefault();
       handleMove(vector);
     }
   }
@@ -226,14 +231,14 @@ function Game() {
             type: REMOVE_ENTITY,
             payload: { entityName: newEntity.entityName }
           });
-          console.log(`Gained ${newEntity.attributes.healValue} health!`);
+          addToLog(`Gained ${newEntity.attributes.healValue} health!`);
           break;
         case 'enemy': {
           const playerHealth = player.attributes.health;
           const playerDamage = player.attributes.damage + player.attributes.bonusDamage;
           const enemyHealth = newEntity.attributes.health;
           let enemyDamage = newEntity.attributes.damage - player.attributes.bonusArmor;
-          if(enemyDamage < 0) {enemyDamage = 0};
+          if (enemyDamage < 0) { enemyDamage = 0; };
           dispatch({
             type: DAMAGE,
             payload: {
@@ -241,7 +246,7 @@ function Game() {
               dmgValue: playerDamage
             }
           });
-          console.log(`Dealt ${playerDamage} damage to ${newEntity.entityName} (Current health: ${state.entities[newEntity.entityName].attributes.health})`);
+          addToLog(`Dealt ${playerDamage} damage to ${newEntity.entityName} (Current health: ${state.entities[newEntity.entityName].attributes.health})`);
           dispatch({
             type: DAMAGE,
             payload: {
@@ -249,12 +254,12 @@ function Game() {
               dmgValue: enemyDamage
             }
           });
-          console.log(`Recieved ${enemyDamage} damage from ${newEntity.entityName}`);
+          addToLog(`Recieved ${enemyDamage} damage from ${newEntity.entityName}`);
           // check if enemy lived
           if (enemyHealth > playerDamage) {
             // check if player died
             if (enemyDamage >= playerHealth) {
-              alert("YOU DIED");
+              toast.error("YOU DIED");
               reset();
               return;
             }
@@ -276,6 +281,7 @@ function Game() {
               type: GAIN_XP,
               payload: { value: baseXP + xpVariance }
             });
+            addToLog(`Gained ${baseXP + xpVariance} XP`);
             dispatch({
               type: LEVEL_UP,
               payload: {
@@ -287,9 +293,9 @@ function Game() {
             const coinVariance = Math.floor(Math.random() * (baseCoins / 5) - (baseCoins / 10));
             dispatch({
               type: GAIN_COINS,
-              payload: {coins: baseCoins + coinVariance}
-            })
-            console.log(`Gained ${baseXP + xpVariance} XP`);
+              payload: { coins: baseCoins + coinVariance }
+            });
+            addToLog(`Gained ${baseCoins + coinVariance} coins`);
           }
           break;
         }
@@ -301,6 +307,7 @@ function Game() {
           spawnPlayer();
           populateMap();
           setMapDisplay(state.map.drawMap());
+          addToLog(`Enter floor ${state.floor}`);
           break;
         }
         default:
@@ -313,62 +320,62 @@ function Game() {
 
   function handleSpending(e) {
     const action = e.target.id;
-    switch(action) {
+    switch (action) {
       case 'heal': {
-        if(state.entities.player.attributes.coins < 10) {
-          alert("Not enough coins");
+        if (state.entities.player.attributes.coins < 10) {
+          toast.error("Not enough coins");
           return;
         }
         dispatch({
           type: HEAL,
-          payload: {healValue: 20}
+          payload: { healValue: 20 }
         });
         dispatch({
           type: SPEND_COINS,
-          payload: {coins: 10}
-        })
+          payload: { coins: 10 }
+        });
         break;
       }
       case 'damage': {
-        if(state.entities.player.attributes.coins < 20) {
-          alert("Not enough coins");
+        if (state.entities.player.attributes.coins < 20) {
+          toast.error("Not enough coins");
           return;
         }
         dispatch({
           type: GAIN_STATS,
-          payload: {stat: 'damage', value: 1}
+          payload: { stat: 'damage', value: 1 }
         });
         dispatch({
           type: SPEND_COINS,
-          payload: {coins: 20}
-        })
+          payload: { coins: 20 }
+        });
         break;
       }
       case 'armor': {
-        if(state.entities.player.attributes.coins < 20) {
-          alert("Not enough coins");
+        if (state.entities.player.attributes.coins < 20) {
+          toast.error("Not enough coins");
           return;
         }
         dispatch({
           type: GAIN_STATS,
-          payload: {stat: 'armor', value: 1}
+          payload: { stat: 'armor', value: 1 }
         });
         dispatch({
           type: SPEND_COINS,
-          payload: {coins: 20}
-        })
+          payload: { coins: 20 }
+        });
         break;
       }
       default:
         break;
     }
-    setMapDisplay(state.map.drawMap())
+    setMapDisplay(state.map.drawMap());
 
   }
 
   async function handleSave() {
     if (!Auth.loggedIn()) {
-      alert("Please log in to save");
+      toast.error("Please log in to save");
     }
     try {
       const response = await saveState({
@@ -377,9 +384,9 @@ function Game() {
       });
       const data = response.json();
       if (!response.ok) {
-        alert(data.message);
+        toast.error(data.message);
       } else {
-        alert("Your data is saved!");
+        toast.success("Your data is saved!");
       }
     } catch (error) {
       console.log(error);
@@ -403,12 +410,12 @@ function Game() {
     if (Auth.loggedIn()) {
       const hasState = await loadState();
       if (!hasState) {
-        alert("No save data found");
+        toast.warn("No save data found");
         return;
       }
       setMapDisplay(state.map.drawMap());
     } else {
-      alert("Please log in to load data");
+      toast.error("Please log in to load data");
     }
     console.log(state);
   }
@@ -431,8 +438,32 @@ function Game() {
     preventScrollOnSwipe: true
   });
 
+  function addToLog(msg) {
+    dispatch({
+      type: ADD_TO_LOG,
+      payload: { msg }
+    });
+  }
+
+  function renderLogRow(props) {
+    const { index, style } = props;
+    return (<ListItem style={style} key={index} sx={{ border: '1px solid lightgray', borderRadius: '5px', backgroundColor: 'white' }}>{state.history[index]}</ListItem>);
+  }
+
+
   return (
     <Container maxWidth="md" sx={{ marginBottom: '80px' }}>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <Box sx={{
         display: 'flex', flexDirection: 'row', justifyContent: 'center',
         backgroundColor: 'whitesmoke', padding: '20px', margin: '20px auto',
@@ -474,6 +505,20 @@ function Game() {
           </Grid>
           <Grid item tabIndex={0} onKeyDown={handleKeyPress} {...swipeHandlers}>
             {mapDisplay}
+          </Grid>
+          <Grid item sx={{
+            margin: '10px', padding: '5px', border: '1px solid black', borderRadius: '5px',
+            height: '200px', width: '400px'
+          }}>
+            <Typography variant='h6'>Game Log:</Typography>
+            <FixedSizeList
+              height={150}
+              width={385}
+              itemSize={40}
+              itemCount={state.history.length}
+              style={{ backgroundColor: 'whitesmoke', borderRadius: '5px' }}>
+              {renderLogRow}
+            </FixedSizeList>
           </Grid>
         </Grid>
       </Box>
