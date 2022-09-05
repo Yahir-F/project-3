@@ -15,16 +15,25 @@ function Home() {
     <Container maxWidth="sm" sx={{ margin: "20px auto", paddingTop: "50px" }}>
       <Box sx={{color: "lightblue", padding:'30px', }}>
         <Typography sx={{ textAlign: "center" }}>
+          <Typography variant='h4' sx={{color:'white'}}>
           WELCOME TO ROGUESCAPE
           <br />
-          INTRUCTIONS: <br />
-          Movement: Arrow Keys Up,Down,Left,Right <br />
-          Move Against Enemy to engage in Combat Fight enemies and Level Up{" "}
+          </Typography>
+          INSTRUCTIONS: <br />
+          Movement: Arrow Keys <br />
+          Blue = Player<br />
+          Red = Enemies<br />
+          Green = Health<br />
+          Purple = Next Floor<br />
+          Move Against Enemy to engage in Combat and Gain XP{" "}
           <br />
           Only the Strongest Make it to the End!!! <br />
-          This game was created for players with interests in Rougelike Games.{" "}
+          This game was created for players with interests in Roguelike Games.{" "}
           <br  />
-          CREATE AN ACCOUNT FOR THE BEST USER EXPERIENCE
+          CREATE AN ACCOUNT FOR THE BEST USER EXPERIENCE <br />
+          <Typography sx={{fontWeight:'bolder', color:'white'}}>
+          Made by Sean Oh & Yahir Federico
+          </Typography>
         </Typography>
       </Box>
     </Container>
