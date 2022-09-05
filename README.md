@@ -1,8 +1,8 @@
 
    <h1 align ="center">Roguescape<h1>
-
-![Roguescape](./client/src/images/game.png)
-
+<p align="center">
+<img align="center" src="./client/src/images/game.png" width="150">
+</p>
    <h2 align ="center">A roguelike dungeon crawler game built with React, Redux, and Node.js<h2>
 
    <h3 align ="center">Play the game <a href="https://roguescape.herokuapp.com/">here</a>!<h3>
@@ -14,7 +14,7 @@
 * [Installation](#installation)
 * [Usage](#usage)
 * [Technologies](#technologies)
-* [snippets](#snippets)
+* [Snippets](#snippets)
 * [License](#license)
 * [Contributions](#contributions)
 
