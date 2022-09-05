@@ -49,7 +49,7 @@ const SignupForm = (props) => {
     };
     return (
 
-        <Card sx={{backgroundColor: 'transparent', paddingBottom:'60px'}}>
+        <Card sx={{backgroundColor: 'transparent', }}>
         <CardContent>
           <Typography sx={{color:'white',backgroundImage: `url(${brick})`, padding: '20px'}} width='30%' margin='auto'>
           <Typography gutterBottom variant='h4'sx={{display: 'flex',justifyContent: 'center'}}>Signup</Typography>
@@ -84,7 +84,7 @@ const SignupForm = (props) => {
               sx={{margin: '0 0 4px 0', width: '100%'}}
             />
 
-            <InputLabel required sx={{margin: '4px 0 2px 0'}}>password: </InputLabel>
+            <InputLabel required sx={{margin: '4px 0 2px 0',}}>password: </InputLabel>
             <TextField 
                   className='form-input'
               value={formState.password}
