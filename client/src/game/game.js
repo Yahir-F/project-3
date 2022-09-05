@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import _ from 'lodash';
 import { useSwipeable } from 'react-swipeable';
-import { Container, Box, Grid, Card, CardContent, Button, Typography, CardActions, List, ListItem } from '@mui/material';
+import { Container, Box, Grid, Card, CardContent, Button, Typography, CardActions, List, ListItem, ButtonGroup } from '@mui/material';
 
-import { CREATE_MAP, ADD_ENTITY, MOVE, HEAL, REMOVE_ENTITY, RESET_STATE, DAMAGE, GAIN_XP, LOAD_STATE, LEVEL_UP, INCREASE_FLOOR } from '../utils/actions';
+import { CREATE_MAP, ADD_ENTITY, MOVE, HEAL, REMOVE_ENTITY, RESET_STATE, DAMAGE, GAIN_XP, LOAD_STATE, LEVEL_UP, INCREASE_FLOOR, GAIN_COINS, GAIN_STATS, SPEND_COINS } from '../utils/actions';
 import Entity from './entity';
 import Auth from '../utils/auth';
 import { getMe, saveState } from '../utils/api';
@@ -18,8 +18,8 @@ function Game() {
   const windowWidth = window.innerWidth;
 
   function generateMap() {
-    const mapWidth = (windowWidth < 600) ? Math.floor(windowWidth / 13) : 50;
-    const mapHeight = (windowWidth < 600) ? Math.floor(windowWidth / 13) : 50;
+    const mapWidth = (windowWidth < 700) ? Math.floor(windowWidth / 15) : 50;
+    const mapHeight = (windowWidth < 700) ? Math.floor(windowWidth / 15) : 50;
     dispatch({
       type: CREATE_MAP,
       payload: { width: mapWidth, height: mapHeight }
@@ -53,6 +53,9 @@ function Game() {
         damage: state.entities.player.attributes.damage,
         xp: state.entities.player.attributes.xp,
         level: state.entities.player.attributes.level,
+        coins: state.entities.player.attributes.coins,
+        bonusDamage: state.entities.player.attributes.bonusDamage,
+        bonusArmor: state.entities.player.attributes.bonusArmor,
       }
     };
     dispatch({
@@ -207,7 +210,6 @@ function Game() {
       }
 
       switch (newEntity.tileClass) {
-        /* Insert cases for health, weapon, enemy, etc. */
         case 'health':
           dispatch({
             type: MOVE,
@@ -228,9 +230,10 @@ function Game() {
           break;
         case 'enemy': {
           const playerHealth = player.attributes.health;
-          const playerDamage = player.attributes.damage;
+          const playerDamage = player.attributes.damage + player.attributes.bonusDamage;
           const enemyHealth = newEntity.attributes.health;
-          const enemyDamage = newEntity.attributes.damage;
+          let enemyDamage = newEntity.attributes.damage - player.attributes.bonusArmor;
+          if(enemyDamage < 0) {enemyDamage = 0};
           dispatch({
             type: DAMAGE,
             payload: {
@@ -280,6 +283,12 @@ function Game() {
                 level: calculateLevel
               }
             });
+            const baseCoins = Math.floor((2 * (state.floor) ** 1.5 + 5));
+            const coinVariance = Math.floor(Math.random() * (baseCoins / 5) - (baseCoins / 10));
+            dispatch({
+              type: GAIN_COINS,
+              payload: {coins: baseCoins + coinVariance}
+            })
             console.log(`Gained ${baseXP + xpVariance} XP`);
           }
           break;
@@ -300,6 +309,61 @@ function Game() {
       setMapDisplay(state.map.drawMap());
       return;
     }
+  }
+
+  function handleSpending(e) {
+    const action = e.target.id;
+    switch(action) {
+      case 'heal': {
+        if(state.entities.player.attributes.coins < 10) {
+          alert("Not enough coins");
+          return;
+        }
+        dispatch({
+          type: HEAL,
+          payload: {healValue: 20}
+        });
+        dispatch({
+          type: SPEND_COINS,
+          payload: {coins: 10}
+        })
+        break;
+      }
+      case 'damage': {
+        if(state.entities.player.attributes.coins < 20) {
+          alert("Not enough coins");
+          return;
+        }
+        dispatch({
+          type: GAIN_STATS,
+          payload: {stat: 'damage', value: 1}
+        });
+        dispatch({
+          type: SPEND_COINS,
+          payload: {coins: 20}
+        })
+        break;
+      }
+      case 'armor': {
+        if(state.entities.player.attributes.coins < 20) {
+          alert("Not enough coins");
+          return;
+        }
+        dispatch({
+          type: GAIN_STATS,
+          payload: {stat: 'armor', value: 1}
+        });
+        dispatch({
+          type: SPEND_COINS,
+          payload: {coins: 20}
+        })
+        break;
+      }
+      default:
+        break;
+    }
+    setMapDisplay(state.map.drawMap())
+
   }
 
   async function handleSave() {
@@ -390,7 +454,16 @@ function Game() {
                   <ListItem>XP: {state.entities.player.attributes.xp}</ListItem>
                   <ListItem>Level: {state.entities.player.attributes.level}</ListItem>
                   <ListItem>Current Damage: {state.entities.player.attributes.damage}</ListItem>
+                  <ListItem>Coins: {state.entities.player.attributes.coins}</ListItem>
+                  <ListItem>Bonus Damage: {state.entities.player.attributes.bonusDamage}</ListItem>
+                  <ListItem>Bonus Armor: {state.entities.player.attributes.bonusArmor}</ListItem>
                 </List>
+
+                <ButtonGroup variant='text' orientation='vertical' size='small'>
+                  <Button onClick={handleSpending} id='heal'>Heal 20 (10 Coins)</Button>
+                  <Button onClick={handleSpending} id='damage'>+1 Damage (20 Coins)</Button>
+                  <Button onClick={handleSpending} id='armor'>+1 Armor (20 Coins)</Button>
+                </ButtonGroup>
 
               </CardContent>
               <CardActions>
