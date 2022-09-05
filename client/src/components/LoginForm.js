@@ -66,7 +66,7 @@ const LoginForm = (props) => {
           <InputLabel required sx={{ margin: '4px 0 2px 0', }}>Username </InputLabel>
           <TextField
             className='form-input'
-            placeholder='username'
+            placeholder='Username'
             value={formState.username}
             name="username"
             onChange={handleChange}
@@ -74,10 +74,10 @@ const LoginForm = (props) => {
             variant="standard"
             sx={{ margin: '0 0 4px 0', width: '100%' }}
           />
-          <InputLabel required sx={{ margin: '4px 0 2px 0' }}>password: </InputLabel>
+          <InputLabel required sx={{ margin: '4px 0 2px 0' }}>Password: </InputLabel>
           <TextField
             value={formState.password}
-            placeholder='password'
+            placeholder='Password'
             name="password"
             onChange={handleChange}
             type="password"
