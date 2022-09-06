@@ -20,7 +20,6 @@ const initialState = {
                 coins: 100,
                 bonusDamage: 0,
                 bonusArmor: 0
-                /* insert more attributes */
             }
         }
     },
@@ -31,25 +30,32 @@ const initialState = {
 function reducer(state = initialState, action) {
     switch (action.type) {
         case LOAD_STATE: 
+            // copy payload to state
             _.assign(state, action.payload.state)
+            // reconstruct map functionality
             state.map = Map.constructMap(state.map);
+            // reconstruct entity functionality
             for(let key in state.entities) {
                 let tempEntity = {...state.entities[key]}
                 state.entities[key] = new Entity(tempEntity.x, tempEntity.y, tempEntity.tileClass, tempEntity.entityName, tempEntity.attributes);
             }
             return state;
         case CREATE_MAP:
+            // Create a new map
             state.map = new Map(action.payload.width, action.payload.height);
             state.map.createMap();
             return state;
         case UPDATE_MAP:
+            // update map with the payload
             return {
                 ...state,
                 map: action.payload
             };
         case RESET_STATE:
+            // reset state to initial state
             return initialState;
         case ADD_ENTITY: {
+            // create a new entity from payload
             let updatedMap = state.map;
             const newEntity = new Entity(
                 action.payload.x,
@@ -57,8 +63,11 @@ function reducer(state = initialState, action) {
                 action.payload.tileClass,
                 action.payload.entityName,
                 action.payload.attributes);
+            // add the entity to the map
             updatedMap.map[action.payload.x][action.payload.y] = newEntity;
+            // update free tiles tracker
             _.omit(updatedMap.freeTiles, `${action.payload.x}x${action.payload.y}`);
+            // add entity to entity tracker
             _.set(state.entities, action.payload.entityName, newEntity);
             return {
                 ...state,
@@ -66,47 +75,52 @@ function reducer(state = initialState, action) {
             };
         }
         case REMOVE_ENTITY: {
+            // delete entity from entity tracker
             delete state.entities[action.payload.entityName]
             return state
         }
         case MOVE: {
-            //console.log(action);
             let updatedMap = state.map;
             let entity = action.payload.entity;
-            //console.log(entity);
+            // calculate new coords
             const newCoords = {
                 x: entity.x + action.payload.vector.x,
                 y: entity.y + action.payload.vector.y
             };
-            //console.log(newCoords);
+            // replace old coords in map with floor tile
             updatedMap.map[entity.x][entity.y] = new Tile(entity.x, entity.y, 'floor');
+            // set new coords in map to the entity
             updatedMap.map[newCoords.x][newCoords.y] = entity;
+            // update the coords of the entity
             state.entities[entity.entityName].x = newCoords.x;
             state.entities[entity.entityName].y = newCoords.y;
-
+            // update the record of free tiles on the map
             _.chain(updatedMap.freeTiles)
                 .omit(`${entity.x}x${entity.y}`)
                 .set(`${newCoords.x}x${newCoords.y}`, entity);
-
             return {
                 ...state,
                 map: updatedMap
             };
         }
         case HEAL: {
+            // increment player's health
             state.entities.player.attributes.health += action.payload.healValue
             return state;
         }
         case DAMAGE: {
-            state.entities[action.payload.entityName].attributes.health -= action.payload.dmgValue
+            // decrement entity's health
+            const entity = state.entities[action.payload.entityName];
+            entity.attributes.health -= action.payload.dmgValue;
             return state;
         }
         case GAIN_XP: {
+            // increment player's xp
             state.entities.player.attributes.xp += action.payload.value;
             return state;
         }
         case LEVEL_UP: {
-            console.log(state);
+            // update level and stats to match with current xp value
             const currLevel = action.payload.level(state.entities.player.attributes.xp);
             const newDamage = action.payload.stats(50, currLevel);
             state.entities.player.attributes.level = currLevel;
@@ -114,14 +128,17 @@ function reducer(state = initialState, action) {
             return state;
         }
         case GAIN_COINS: {
+            // increment player's coins
             state.entities.player.attributes.coins += action.payload.coins;
             return state;
         }
         case SPEND_COINS: {
+            // decrement player's coins
             state.entities.player.attributes.coins -= action.payload.coins;
             return state;
         }
         case GAIN_STATS: {
+            // increment player's bonus stats 
             switch(action.payload.stat) {
                 case 'damage':
                     state.entities.player.attributes.bonusDamage += action.payload.value;
@@ -134,10 +151,12 @@ function reducer(state = initialState, action) {
             }
         }
         case INCREASE_FLOOR: {
+            // increment floor number
             state.floor += 1;
             return state;
         }
         case ADD_TO_LOG: {
+            // add log message to beginning of history array
             state.history.unshift(action.payload.msg);
             return state;
         }

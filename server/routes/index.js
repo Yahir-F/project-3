@@ -3,6 +3,6 @@ const apiRoutes = require('./api');
 
 router.use('/api', apiRoutes);
 
-router.use((req, res) => res.redirect('/'));
+//router.use((req, res) => res.redirect('/'));
 
 module.exports = router;
