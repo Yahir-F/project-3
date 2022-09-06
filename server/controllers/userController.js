@@ -45,7 +45,6 @@ module.exports = {
       if (!user) {
         return res.status(400).json({ message: 'Unable to find user with that username' });
       }
-
       const isCorrectPassword = await user.isCorrectPassword(req.body.password);
       if (!isCorrectPassword) {
         return res.status(400).json({ message: 'Incorrect password' });
@@ -61,10 +60,10 @@ module.exports = {
     try {
       const user = await User.findOneAndUpdate(
         { _id: req.user ? req.user._id : req.body._id },
-        {$set: {saveState: req.body.saveState}},
-        {new: true}
+        { $set: { saveState: req.body.saveState } },
+        { new: true }
       );
-      if(!user) {
+      if (!user) {
         return res.status(400).json({ message: 'Unable to save data' });
       }
       res.json(user);
