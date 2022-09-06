@@ -13,8 +13,9 @@
 * [Showcase](#showcase)
 * [Installation](#installation)
 * [Usage](#usage)
+* [Features](#features)
 * [Technologies](#technologies)
-* [Snippets](#snippets)
+* [snippets](#snippets)
 * [License](#license)
 * [Contributions](#contributions)
 
@@ -26,12 +27,35 @@ A roguelike dungeon crawler game built with React, Redux, and Node.js. The game 
 ## Showcase
 
 ![showcase](./client/src/images/Roguescape.gif)
+<br />
+
+Homepage: 
+![homepage](./client/src/images/homepage.png)
+
+<br />
+
+Login page: 
+![login](./client/src/images/login.png)
 
 ## Installation
 `git clone` this repository and run `npm install` to install all dependencies. Run `npm run develop` to start the Server, Client and navigate to `localhost:3001` to play the game.
 
 ## Usage
 Navigate to the deployed link to play the game. Create an account on the Login page and start playing. Use the arrow keys to move around the map. Defeat monsters to gain experience and level up. Enter the pink portal to go to the next floor. The game is over when the player dies.
+
+## Features
+
+* User authentication
+* User can create an account and login
+* User can move around the map
+* User can attack enemies
+* User can level up
+* User can spend coins to increase stats
+* User can go to the next floor
+* User can see their stats
+* User can save their progress
+* User can load their progress
+
 ## Technologies
 
 <li>React</li>
@@ -132,6 +156,7 @@ Navigate to the deployed link to play the game. Create an account on the Login p
           break;
 
 ```
+### 
 
 </details>
 
