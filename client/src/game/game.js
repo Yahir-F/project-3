@@ -508,13 +508,11 @@ function Game() {
                   <ListItem>Bonus Damage: {state.entities.player.attributes.bonusDamage}</ListItem>
                   <ListItem>Bonus Armor: {state.entities.player.attributes.bonusArmor}</ListItem>
                 </List>
-
                 <ButtonGroup variant='text' orientation='vertical' size='small'>
                   <Button onClick={handleSpending} id='heal'>Heal 20 (10 Coins)</Button>
                   <Button onClick={handleSpending} id='damage'>+1 Damage (20 Coins)</Button>
                   <Button onClick={handleSpending} id='armor'>+1 Armor (20 Coins)</Button>
                 </ButtonGroup>
-
               </CardContent>
               <CardActions>
                 <Button onClick={handleSave}>Save Game</Button>

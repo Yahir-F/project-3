@@ -1,26 +1,25 @@
 import React, { useState } from 'react';
 import Auth from '../utils/auth';
 import { loginUser } from '../utils/api';
-import Card from '@mui/material/Card'
+import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import Box from '@mui/material/Box'
-import TextField from '@mui/material/TextField'
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
 import InputLabel from '@mui/material/InputLabel';
-import Button from '@mui/material/Button'
+import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import brick from "../images/brick.png"
+import brick from "../images/brick.png";
 
 
 
 
 const LoginForm = (props) => {
   const [formState, setFormState] = useState({ username: '', password: '' });
-  const [errorMessage, setErrorMessage] = useState('')
+  const [errorMessage, setErrorMessage] = useState('');
 
   // update state based on form input changes
   const handleChange = (event) => {
     const { name, value } = event.target;
-
     setFormState({
       ...formState,
       [name]: value,
@@ -30,15 +29,13 @@ const LoginForm = (props) => {
   // submit form
   const handleFormSubmit = async (event) => {
     event.preventDefault();
-    console.log(formState);
     try {
       const response = await loginUser(formState);
       const data = await response.json();
       if (!response.ok) {
-        setErrorMessage(data.message)
+        setErrorMessage(data.message);
         return;
       }
-
       Auth.login(data.token);
     } catch (e) {
       console.log(e);
@@ -50,14 +47,15 @@ const LoginForm = (props) => {
       password: '',
     });
   };
+
   return (
-    <Card sx={{backgroundColor:'transparent'}}>
+    <Card sx={{ backgroundColor: 'transparent' }}>
       <CardContent>
         <Typography sx={{ color: 'white', backgroundImage: `url(${brick})`, padding: '20px' }} width='30%' margin='auto'>
           <Typography gutterBottom variant='h4' sx={{ display: 'flex', justifyContent: 'center' }}>Login</Typography>
           <Typography variant='body1' sx={{ display: 'flex', justifyContent: 'center' }}>Enter Login Info </Typography>
         </Typography>
-        <Box component="form" sx={{ backgroundColor:'whitesmoke', backgroundSize:"900px 900px;", padding: '20px' }} width='30%' margin="auto">
+        <Box component="form" sx={{ backgroundColor: 'whitesmoke', backgroundSize: "900px 900px;", padding: '20px' }} width='30%' margin="auto">
           {errorMessage && (
             <Box bgcolor={(errorMessage === 'Submitted!') ? "#4caf50" : "#d32f2f"} padding='3px 8px' textAlign='center' color='white' borderRadius='4px' margin='0 0 8px 0'>
               <Typography variant='body1'>{errorMessage}</Typography>
@@ -84,7 +82,6 @@ const LoginForm = (props) => {
             variant="standard"
             sx={{ margin: '0 0 4px 0', width: '100%' }}
           />
-
           <Button variant='outlined'
             sx={{
               margin: '8px 0 0 0',
@@ -103,7 +100,7 @@ const LoginForm = (props) => {
         </Box>
       </CardContent>
     </Card>
-  )
-}
+  );
+};
 
 export default LoginForm;

@@ -1,45 +1,41 @@
-import React from 'react'
-import CssBaseline from "@mui/material/CssBaseline";
+import React from 'react';
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
-import { Typography } from "@mui/material";
-
-
-
+import Typography from "@mui/material/Typography";
 
 function Home() {
   return (
-    <React.Fragment>
-    <CssBaseline />
-    <Box sx={{color: "white", padding:'30px', }}>
-    <Container maxWidth="sm" sx={{ margin: "20px auto", paddingTop: "50px" }}>
-      <Box sx={{color: "lightblue", padding:'30px', }}>
-        <Typography sx={{ textAlign: "center" }}>
-          <Typography variant='h4' sx={{color:'white'}}>
-          WELCOME TO ROGUESCAPE
-          <br />
+    <Box sx={{ color: "white", padding: '30px', }}>
+      <Container maxWidth="sm" sx={{ margin: "20px auto", paddingTop: "50px" }}>
+        <Box sx={{ color: "lightblue", padding: '30px', textAlign: "center" }}>
+          <Typography variant='h4' sx={{ color: 'white' }}>
+            WELCOME TO ROGUESCAPE
           </Typography>
-          INSTRUCTIONS: <br />
+          <Typography variant='h5'>
+            Only the Strongest Make it to the End!!!
+          </Typography>
+          <Typography variant='body2'>
+            This game was created for players with interests in Roguelike Games.
+            <br />
+            CREATE AN ACCOUNT FOR THE BEST USER EXPERIENCE
+          </Typography>
+          <Typography variant='h6'>
+            Instructions:
+          </Typography>
           Movement: Arrow Keys <br />
           Blue = Player<br />
           Red = Enemies<br />
           Green = Health<br />
           Purple = Next Floor<br />
-          Move Against Enemy to engage in Combat and Gain XP{" "}
+          Move Against enemies to engage in combat and gain XP
           <br />
-          Only the Strongest Make it to the End!!! <br />
-          This game was created for players with interests in Roguelike Games.{" "}
-          <br  />
-          CREATE AN ACCOUNT FOR THE BEST USER EXPERIENCE <br />
-          <Typography sx={{fontWeight:'bolder', color:'white'}}>
-          Made by Sean Oh & Yahir Federico
+          <Typography sx={{ fontWeight: 'bolder', color: 'white', marginTop: '10px' }}>
+            Made by Sean Oh & Yahir Federico
           </Typography>
-        </Typography>
-      </Box>
-    </Container>
+        </Box>
+      </Container>
     </Box>
-  </React.Fragment>
-);
+  );
 }
 
 

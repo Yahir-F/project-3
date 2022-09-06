@@ -1,41 +1,43 @@
-html, body {
-    margin: 0;
+html,
+body {
+  margin: 0;
 }
 
 .tile {
-    width: 10px;
-    display: inline-block;
+  width: 10px;
+  display: inline-block;
 }
 
 .floor {
-    background-color: grey;
+  background-color: grey;
 }
 
 .wall {
-    background-color: black;
+  background-color: black;
 }
 
 .player {
-    background-color: blue;
+  background-color: blue;
 }
 
 .health {
-    background-color: green;
+  background-color: green;
 }
 
 .enemy {
-    background-color: red;
+  background-color: red;
 }
 
 .exit {
-    background-color: fuchsia;
+  background-color: fuchsia;
 }
 
-.row, .tile {
-    margin: 0px;
-    padding: 0px;
-    border-style: solid;
-    border-color: black;
-    border-width: 0px;
-    height: 10px;
+.row,
+.tile {
+  margin: 0px;
+  padding: 0px;
+  border-style: solid;
+  border-color: black;
+  border-width: 0px;
+  height: 10px;
 }

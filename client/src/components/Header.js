@@ -6,37 +6,30 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom';
-import brick from "../images/brick2.jpg"
-import logo from "../images/logo.png"
+import brick from "../images/brick2.jpg";
+import logo from "../images/logo.png";
 
 function Header() {
   const logout = (event) => {
     event.preventDefault();
     Auth.logout();
   };
+
   return (
     <Box sx={{ flexGrow: 1 }}>
-      {/* Setting the Header background to a Brick */}
+      {/* Setting the Header background to bricks */}
       <AppBar sx={{ backgroundImage: `url(${brick})` }} position="static">
         <Toolbar>
-          <Box
-
-            size="large"
-            edge="start"
-            aria-label="menu"
-            sx={{ mr: 2,  }}
-          >
-            
-          </Box>
-
           <img src={logo} alt="logo" width='20px' height='20px'></img>
-          <Box sx={{flexGrow:1}}>
-          <Typography variant="h6" component="span" sx={{cursor:'grab',"&:hover":{ color:'gray' }}}onClick={event =>  window.location.href='/'} >
-            Roguescape
-          </Typography>
+          <Box sx={{ flexGrow: 1 }}>
+            <Link to={'/'} style={{ textDecoration: 'none', color: 'white' }}>
+              <Typography variant="h6" component="span" sx={{ cursor: 'pointer', "&:hover": { color: 'gray' } }} /* onClick={event => window.location.href = '/'} */ >
+                Roguescape
+              </Typography>
+            </Link>
           </Box>
           <Button color="inherit">
-            {/* Removing the underline on the button due to Links Nature */}
+            {/* Removing the underline on the link text */}
             <Link to='/' style={{ textDecoration: 'none', color: 'white' }}>
               Home
             </Link>
@@ -46,7 +39,7 @@ function Header() {
               Game
             </Link>
           </Button>
-          {/* Checks if user is logged in and changes visible  */}
+          {/* Checks if user is logged in and changes what is visible  */}
           {Auth.loggedIn() ? (
             <Button
               color='inherit'
@@ -61,11 +54,8 @@ function Header() {
               </Link>
             </Button>
           )}
-
         </Toolbar>
-
       </AppBar>
-
     </Box>
   );
 }

@@ -1,16 +1,15 @@
-import React from 'react'
-import Game from '../../game/game'
-import GameProvider from '../../utils/GameContext'
+import React from 'react';
+import Game from '../../game/game';
+import GameProvider from '../../utils/GameContext';
 
 function Gamepage() {
-
   return (
-    <div style={{"textAlign":"center"}}>
+    <div style={{ "textAlign": "center" }}>
       <GameProvider>
-        <Game/>
+        <Game />
       </GameProvider>
     </div>
-  )
+  );
 }
 
-export default Gamepage
+export default Gamepage;

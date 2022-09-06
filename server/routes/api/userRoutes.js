@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { authMiddleware } = require('../../utils/auth')
+const { authMiddleware } = require('../../utils/auth');
 
 const {
   getUsers,
@@ -7,17 +7,16 @@ const {
   createUser,
   login,
   saveState
-  } = require('../../controllers/userController');
-  
+} = require('../../controllers/userController');
 
-  router.route('/').get(getUsers).post(createUser);
+router.route('/').get(getUsers).post(createUser);
 
-  router.route('/login').post(login);
+router.route('/login').post(login);
 
-  router.route('/me').get(authMiddleware, getSingleUser);
+router.route('/me').get(authMiddleware, getSingleUser);
 
-  router.route('/:userId').get(authMiddleware, getSingleUser).delete();
+router.route('/:userId').get(authMiddleware, getSingleUser).delete();
 
-  router.route('/save').post(saveState);
+router.route('/save').post(saveState);
 
-  module.exports = router;
+module.exports = router;
