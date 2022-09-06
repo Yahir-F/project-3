@@ -1,3 +1,4 @@
+// import packages
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import _ from 'lodash';
@@ -7,6 +8,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Container, Box, Grid, Card, CardContent, Button, Typography, CardActions, List, ListItem, ButtonGroup } from '@mui/material';
 
+// import modules
 import { CREATE_MAP, ADD_ENTITY, MOVE, HEAL, REMOVE_ENTITY, RESET_STATE, DAMAGE, GAIN_XP, LOAD_STATE, LEVEL_UP, INCREASE_FLOOR, GAIN_COINS, GAIN_STATS, SPEND_COINS, ADD_TO_LOG } from '../utils/actions';
 import Entity from './entity';
 import Auth from '../utils/auth';
@@ -14,12 +16,14 @@ import { getMe, saveState } from '../utils/api';
 
 function Game() {
 
+  // set up state
   const [mapDisplay, setMapDisplay] = useState();
   const state = useSelector(state => state);
   const dispatch = useDispatch();
 
   const windowWidth = window.innerWidth;
 
+  // create a map based on window size
   function generateMap() {
     const mapWidth = (windowWidth < 700) ? Math.floor(windowWidth / 15) : 50;
     const mapHeight = (windowWidth < 700) ? Math.floor(windowWidth / 15) : 50;
@@ -30,20 +34,24 @@ function Game() {
     addToLog("New map generated");
   }
 
+  // find a random free tile in the map
   function getFreeTile() {
     const randNum = Math.floor(Math.random() * Object.keys(state.map.freeTiles).length);
     const key = Object.keys(state.map.freeTiles).splice(randNum, 1)[0];
     return key;
   }
 
+  // function for calculating stats
   function calculateStats(base, level) {
     return Math.floor(((2 * base * level) / 30) + level);
   }
 
+  // funciton for calculating level based on xp
   function calculateLevel(xp) {
     return Math.floor((xp ** 0.5) / 3);
   }
 
+  // spawn player at a random free tile
   function spawnPlayer() {
     const key = getFreeTile();
     const freeTile = state.map.freeTiles[key];
@@ -69,10 +77,10 @@ function Game() {
     addToLog("Player spawned");
   }
 
-
+  // populate the map with health, enemies, and the exit
   function populateMap() {
+    // generate 1-4 health entities on the map
     const numHealth = Math.floor(Math.random() * 4) + 1;
-    console.log(numHealth);
     for (let i = 0; i < numHealth; i++) {
       const freeTile = state.map.freeTiles[getFreeTile()];
       const newHealth = {
@@ -90,8 +98,8 @@ function Game() {
       });
     }
 
+    // generate 2-6 enemy entities on the map with health/damage based on floor #
     const numEnemy = Math.floor(Math.random() * 4) + 2;
-
     for (let i = 0; i < numEnemy; i++) {
       const freeTileKey = getFreeTile();
       const freeTile = state.map.freeTiles[freeTileKey];
@@ -115,6 +123,7 @@ function Game() {
       });
     }
 
+    // generate an exit entity
     {
       let freeTile = state.map.freeTiles[getFreeTile()];
       const newExit = {
@@ -132,6 +141,7 @@ function Game() {
     addToLog("Map populated");
   }
 
+  // handle arrow key presses
   const handleKeyPress = _.throttle((e) => {
     let vector;
     switch (e.code) {
@@ -156,6 +166,7 @@ function Game() {
     }
   }, 100);
 
+  // handle swipes
   function handleSwipe(e) {
     let vector;
     switch (e.dir) {
@@ -179,26 +190,27 @@ function Game() {
     }
   }
 
+  // logic for movement and interactions
   function handleMove(vector) {
-
-    console.log(state);
-
     const player = state.entities.player;
     const map = state.map;
+    // calculate new coords based on vector
     const newCoords = {
       x: player.x + vector.x,
       y: player.y + vector.y
     };
 
+    // check if in the map and the newCoords aren't a wall
     if (_.inRange(newCoords.x, 0, map.width) &&
       _.inRange(newCoords.y, 0, map.height) &&
       map.map[newCoords.x][newCoords.y].tileClass !== 'wall') {
-
+      // check if the new coords are an entity
       let newEntity;
       if (map.map[newCoords.x][newCoords.y] instanceof Entity) {
-        newEntity = map.map[newCoords.x][newCoords.y];
+        newEntity = state.entities[map.map[newCoords.x][newCoords.y].entityName];
       }
 
+      // move if the newCoords aren't an entity or wall
       if (!newEntity) {
         dispatch({
           type: MOVE,
@@ -214,7 +226,9 @@ function Game() {
         return;
       }
 
+      // switch case for different entity types
       switch (newEntity.tileClass) {
+        // move player, heal player, and remove health entity
         case 'health':
           dispatch({
             type: MOVE,
@@ -233,6 +247,8 @@ function Game() {
           });
           addToLog(`Gained ${newEntity.attributes.healValue} health!`);
           break;
+        // calculate damage and health values and update player/enemy values
+        // gain coins and xp based on floor level
         case 'enemy': {
           const playerHealth = player.attributes.health;
           const playerDamage = player.attributes.damage + player.attributes.bonusDamage;
@@ -261,6 +277,7 @@ function Game() {
             if (enemyDamage >= playerHealth) {
               toast.error("YOU DIED");
               reset();
+              window.location.reload();
               return;
             }
           } else {
@@ -299,6 +316,7 @@ function Game() {
           }
           break;
         }
+        // increase floor and reset map
         case 'exit': {
           dispatch({
             type: INCREASE_FLOOR
@@ -318,6 +336,7 @@ function Game() {
     }
   }
 
+  // handle spend coins buttons
   function handleSpending(e) {
     const action = e.target.id;
     switch (action) {
@@ -370,9 +389,9 @@ function Game() {
         break;
     }
     setMapDisplay(state.map.drawMap());
-
   }
 
+  // handle save button
   async function handleSave() {
     if (!Auth.loggedIn()) {
       toast.error("Please log in to save");
@@ -393,10 +412,10 @@ function Game() {
     }
   }
 
+  // handle loading state
   async function loadState() {
     const response = await getMe(Auth.getToken());
     const data = await response.json();
-    console.log(data);
     if (!data.saveState) {
       return false;
     }
@@ -404,9 +423,8 @@ function Game() {
     return true;
   }
 
+  // handle load button
   async function handleLoad() {
-    let x = { ...state };
-    console.log(x);
     if (Auth.loggedIn()) {
       const hasState = await loadState();
       if (!hasState) {
@@ -417,9 +435,9 @@ function Game() {
     } else {
       toast.error("Please log in to load data");
     }
-    console.log(state);
   }
 
+  // reset map
   function reset() {
     dispatch({ type: RESET_STATE });
     generateMap();
@@ -433,11 +451,13 @@ function Game() {
     reset();
   }, []);
 
+  // set up swipe handlers
   const swipeHandlers = useSwipeable({
     onSwiped: handleSwipe,
     preventScrollOnSwipe: true
   });
 
+  // add a new message to the game log
   function addToLog(msg) {
     dispatch({
       type: ADD_TO_LOG,
@@ -445,14 +465,14 @@ function Game() {
     });
   }
 
+  // render game log row
   function renderLogRow(props) {
     const { index, style } = props;
     return (<ListItem style={style} key={index} sx={{ border: '1px solid lightgray', borderRadius: '5px', backgroundColor: 'white' }}>{state.history[index]}</ListItem>);
   }
 
-
   return (
-    <Container maxWidth="md" sx={{  }}>
+    <Container maxWidth="md" sx={{}}>
       <ToastContainer
         position="top-center"
         autoClose={5000}
@@ -479,7 +499,6 @@ function Game() {
                   <Typography variant='h6'>Not logged in</Typography>
                 )}
                 <Typography variant='p'>Floor: {state.floor}</Typography>
-                {console.log(state)}
                 <List>
                   <ListItem>Health: {state.entities.player.attributes.health}</ListItem>
                   <ListItem>XP: {state.entities.player.attributes.xp}</ListItem>
